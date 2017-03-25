@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<a href="/newpost">new post</a>
+
+<h2>Recent Posts</h2>
+<ul>
+    {% for entry in entries %}
+    <li>
+        <h3><a href="/posts/{{ entry.key.urlsafe() }}">{{ entry.subject }}</a></h3>
+
+        {{ entry.content_as_html()|safe }}
+
+        <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+        {{ entry.upvotes or 0}}
+
+        <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
+        {{ entry.downvotes or 0}}
+
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

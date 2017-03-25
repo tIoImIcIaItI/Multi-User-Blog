@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<a href="/">all posts</a><br>
+<form method="post">
+
+    <div>
+        <label for="content">Content</label>
+        <textarea id="content" name="content">{{comment.content}}</textarea>
+        <div>{{content_error}}</div>
+    </div>
+
+    <a href="/posts/{{comment.key.parent().urlsafe()}}">cancel</a>
+
+    <div>
+        <input type="submit">
+    </div>
+
+</form>
+
+{% endblock %}
