@@ -1,0 +1,23 @@
+<div class="">
+
+    <!-- COMMENTS LIST SECTION -->
+    <ul>
+        {% for comment in comments %}
+            {% include 'comment.html' %}
+        {% endfor %}
+    </ul>
+
+    {% if can.comment %}
+        <!-- NEW COMMENT FORM SECTION -->
+        {% include 'new_comment.html' %}
+    {% endif %}
+
+    {% if not authenticated %}
+    <!-- COMMENT SQUEEZE -->
+    <div class="comment-squeeze">
+        Join the discussion!
+        <a href="/login">Sign in</a> or <a href="/signup">sign up</a> to comment on this post
+    </div>
+    {% endif %}
+
+</div>

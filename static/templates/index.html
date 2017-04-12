@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<main id="main">
+
+    <h1>Multi User Blog</h1>
+    <span>Project Submission for Udacity</span>
+
+    <!-- POST TOOLBAR -->
+    {% if authenticated %}
+    <div class="posts-toolbar">
+        <a class="btn uk-button" href="/newpost">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+            <span class="">New Post</span>
+        </a>
+    </div>
+    {% else %}
+    <div class="posts-squeeze">
+        <a href="/login">Sign in</a> or <a href="/signup">sign up</a> to add your own post
+    </div>
+    {% endif %}
+
+    <!-- POST LIST -->
+    <ul class="uk-grid uk-grid-small">
+    {% for entry in entries %}
+        {% include 'post-card.html' %}
+    {% endfor %}
+    </ul>
+
+</main>
+
+{% endblock %}

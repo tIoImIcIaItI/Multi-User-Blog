@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+
+<main id="main">
+
+    <h1>New Post</h1>
+
+    <form id="new-post-form"
+          class="uk-form uk-form-stacked" data-uk-margin
+          method="POST">
+
+        <!-- SUBJECT -->
+        <fieldset class="uk-form-row">
+
+            <label class="uk-form-label" for="subject">Subject</label>
+
+            <input class="{{ 'uk-form-danger' if subject_error else '' }}"
+                   data-autofocus required aria-required="true"
+                   id="subject" name="subject" value="{{subject}}"/>
+
+            <div id="subject-error" data-error-for="subject"
+                 class="validation-error uk-text-danger invisible"></div>
+
+            <div class="uk-text-danger">
+                {% if subject_error %}
+                {{ subject_error }}
+                {% endif %}
+            </div>
+
+        </fieldset>
+
+        <!-- CONTENT -->
+        <fieldset class="uk-form-row">
+
+            <label class="uk-form-label" for="content">Content</label>
+
+            <textarea class="{{ 'uk-form-danger' if subject_error else '' }}"
+                      id="content" name="content"
+                      required aria-required="true">{{content}}</textarea>
+
+            <div id="content-error" data-error-for="content"
+                 class="validation-error uk-text-danger invisible"></div>
+
+            <div class="uk-text-danger">
+                {% if content_error %}
+                {{ content_error }}
+                {% endif %}
+            </div>
+
+        </fieldset>
+
+        <fieldset class="uk-form-row">
+
+            <button class="uk-button uk-button-primary" type='submit'>
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                create <span class="sr-only"> new item</span>
+            </button>
+
+            <a class="uk-button uk-button-mini"
+               href="/">cancel</a>
+
+        </fieldset>
+
+    </form>
+
+</main>
+{% endblock %}

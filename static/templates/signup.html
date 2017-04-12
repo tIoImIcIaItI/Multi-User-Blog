@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block content %}
+
+<main id="main">
+
+    <h1>Sign Up</h1>
+    <span>Sign up to create your account</span>
+
+    <form id="sign-up-form"
+          class="uk-form uk-form-stacked" data-uk-margin
+          method="POST">
+
+        <!-- USERNAME -->
+        <fieldset class="uk-form-row">
+
+            <label class="uk-form-label" for="username">Username</label>
+
+            <input class="form-control"
+                   data-autofocus required aria-required="true"
+                   type="text" id="username" name="username"
+                   value="{{username or ''}}" placeholder="username"/>
+
+            <div id="username-error" data-error-for="username"
+                 class="validation-error uk-text-danger invisible"></div>
+
+            <div class="uk-text-danger">
+                {% if username_error %}
+                {{ username_error }}
+                {% endif %}
+            </div>
+
+        </fieldset>
+
+        <!-- PASSWORD -->
+        <fieldset class="uk-form-row">
+
+            <label class="uk-form-label" for="password">Password</label>
+
+            <input class="form-control"
+                   required aria-required="true"
+                   type="password" id="password" name="password"
+                   value="{{password or ''}}" placeholder="password"/>
+
+            <div id="password-error" data-error-for="password"
+                 class="validation-error uk-text-danger invisible"></div>
+
+            <div class="uk-text-danger">
+                {% if password_error %}
+                {{ password_error }}
+                {% endif %}
+            </div>
+
+        </fieldset>
+
+        <!-- PASSWORD AGAIN -->
+        <fieldset class="uk-form-row">
+
+            <label class="uk-form-label" for="verify">Re-enter Password</label>
+
+            <input class="form-control"
+                   required aria-required="true"
+                   type="password" id="verify" name="verify"
+                   value="{{verify or ''}}" placeholder="enter your password again"/>
+
+            <div id="verify-error" data-error-for="verify"
+                 class="validation-error uk-text-danger invisible"></div>
+
+            <div class="uk-text-danger">
+                {% if verify_error %}
+                {{ verify_error }}
+                {% endif %}
+            </div>
+
+        </fieldset>
+
+        <!-- EMAIL -->
+        <fieldset class="uk-form-row">
+
+            <label class="uk-form-label" for="email">Email</label>
+
+            <input class="form-control"
+                   required aria-required="true"
+                   type="text" id="email" name="email" value="{{email or ''}}"
+                   placeholder="email"/>
+
+            <div id="email-error" data-error-for="email"
+                 class="validation-error uk-text-danger invisible"></div>
+
+            <div class="uk-text-danger">
+                {% if email_error %}
+                {{ email_error }}
+                {% endif %}
+            </div>
+
+        </fieldset>
+
+        <!-- PAGE ERROR -->
+        <div class="uk-text-danger">
+            {% if error %}
+            {{ error }}
+            {% endif %}
+        </div>
+
+        <!-- FORM ACTIONS -->
+        <fieldset class="uk-form-row">
+
+            <button class="uk-button uk-button-primary" type='submit'>
+                Sign Up
+            </button>
+
+            <a class="uk-button uk-button-mini"
+               href="/">cancel</a>
+
+        </fieldset>
+
+    </form>
+
+</main>
+{% endblock %}

@@ -22,5 +22,3 @@ class EntryDb(ndb.Model):
     upvotes = ndb.IntegerProperty()  # TODO: need concurrency control here?
     downvotes = ndb.IntegerProperty()  # TODO: need concurrency control here?
 
-    def content_as_html(self):  # TODO: remove view code from model!
-        return self.content.replace('\n', '<br>')

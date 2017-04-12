@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        {% if page_title %}
+        {{ page_title }} | Multi User Blog
+        {% else %}
+        Multi User Blog
+        {% endif %}
+    </title>
+    <meta name="description" content="Udacity Multi-user Blog Project">
+    <meta name="author" content="David J. King">
+
+    <!-- Styles -->
+    <!--<link href="/css/app.css" rel="stylesheet">-->
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <script src="https://use.fontawesome.com/59942f4bda.js"></script>
+
+    <!-- UIKit-->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.2/css/uikit.almost-flat.min.css"
+          integrity="sha256-2QZIwAhD0nojro0AKG60vfU6US4CrbOhjkB2eZ3u8Fs=" crossorigin="anonymous"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.2/js/uikit.min.js"
+            integrity="sha256-AOJ2iiKYonxl9IfDhEPIIduGHNHezQn8nQJouPRi9ao=" crossorigin="anonymous"></script>
+
+</head>
+<body>
+<div class="uk-container uk-container-center">
+
+    <header role="banner">
+        <!-- MAIN NAVIGATION WIDGET -->
+        <nav class="uk-navbar uk-navbar-attached">
+
+            <ul class="uk-navbar-nav">
+                <li><a href="/">Home</a></li>
+            </ul>
+
+            <div class="uk-navbar-flip">
+                <ul class="uk-navbar-nav">
+                    {% if username is not none %}
+                    <li>
+                        <a href="#">
+                            <span class="sr-only">Signed in as </span>
+                            <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+                            {{ username }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/logout">
+                            Sign Out
+                        </a>
+                    </li>
+                    {% else %}
+                    {% if not suppressLogin %}
+                    <li>
+                        <a href="/login">Sign In</a>
+                    </li>
+                    {% endif %}
+                    {% if not suppressSignup %}
+                    <li>
+                        <a href="/signup">Sign up</a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MESSAGE FLASHING WIDGET -->
+    {% if messages %}
+    <div class="uk-alert" data-uk-alert>
+        <a href="" class="uk-alert-close uk-close"></a>
+        <ul>
+            {% for message in messages %}
+            <li>{{message}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- INCLUDED PAGE CONTENT -->
+    {% block content %}
+    {% endblock %}
+
+</div>
+
+<!-- INCLUDED PAGE SCRIPTS -->
+{% block scripts %}
+{% endblock %}
+</body>
+</html>

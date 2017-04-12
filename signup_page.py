@@ -1,19 +1,11 @@
 import hashlib
-import os
 import random
 import string
-
-import jinja2
 
 from handler import Handler
 from users.user import UserDb
 from users.user_cookie import UserCookie
 from users.user_repository import UserDbRepository
-
-template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-jinja_env = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(template_dir),
-    autoescape=True)
 
 users = UserDbRepository()
 
@@ -24,7 +16,9 @@ class SignupPage(Handler):
         self.response.delete_cookie(
             UserCookie.cookie_name())
 
-        self.render(jinja_env, "signup.html", suppressSignup=True)
+        self.render(
+            "signup.html",
+            suppressSignup=True)
 
     def post(self):
         username = self.request.get('username', '')
@@ -34,13 +28,18 @@ class SignupPage(Handler):
 
         user = users.get_by_username(username)
         if user:
-            self.render(jinja_env, "signup.html", username_error='USERNAME {0} IS ALREADY TAKEN'.format(user))
+            self.render(
+                "signup.html",
+                username_error='USERNAME {0} IS ALREADY TAKEN'.format(user))
             return
 
         # Create a salted, hashed password
-        salt = ''.join([random.choice(list(string.ascii_lowercase)) for x in range(10)])
+        salt = \
+            ''.join([random.choice(list(string.ascii_lowercase))
+                     for x in range(10)])
 
-        pwd_hash = hashlib.sha256(password + salt).hexdigest()
+        pwd_hash = \
+            hashlib.sha256(password + salt).hexdigest()
 
         # Create a new user in the data store
         key = users.add(UserDb(
@@ -57,4 +56,3 @@ class SignupPage(Handler):
 
         # Send the new user to the welcome page
         self.redirect('/welcome')
-

@@ -1,0 +1,43 @@
+<div class="votes-container">
+
+    <!-- UP VOTES -->
+    <div>
+        <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+        <span class="sr-only">up votes</span>
+        {{ entry.upvotes or 0}}
+
+        {% if can.vote %}
+        <form action="/posts/{{entry.key.urlsafe()}}/upvote"
+              method="POST">
+            <input type="hidden" name="id"
+                   value="{{entry.key.urlsafe()}}"/>
+            <button class="btn uk-button" type="submit">upvote</button>
+        </form>
+        {% endif %}
+    </div>
+
+    <!-- DOWN VOTES -->
+    <div>
+        <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
+        <span class="sr-only">down votes</span>
+        {{ entry.downvotes or 0}}
+
+        {% if can.vote %}
+        <form action="/posts/{{entry.key.urlsafe()}}/downvote"
+              method="POST">
+            <input type="hidden" name="id"
+                   value="{{entry.key.urlsafe()}}"/>
+            <button class="btn uk-button" type="submit">downvote</button>
+        </form>
+        {% endif %}
+    </div>
+
+    {% if not authenticated %}
+    <!-- VOTE SQUEEZE -->
+    <div class="vote-squeeze">
+        Your opinion matters!
+        <a href="/login">Sign in</a> or <a href="/signup">sign up</a> to vote for this post
+    </div>
+    {% endif %}
+
+</div>

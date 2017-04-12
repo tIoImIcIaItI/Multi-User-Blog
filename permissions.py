@@ -10,3 +10,8 @@ class CommentPermissions:
     def __init__(self, edit, delete):
         self.edit = edit
         self.delete = delete
+
+
+class AppPermissions:
+    def __init__(self, create_entry):
+        self.create_entry = create_entry

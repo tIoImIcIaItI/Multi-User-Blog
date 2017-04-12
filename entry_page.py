@@ -1,22 +1,33 @@
-import os
-
-import jinja2
-
 from entries.comment_repository import CommentDbRepository
 from entries.entry_handler import EntryHandler
 from entries.entry_repository import EntryDbRepository
 from entries.vote_repository import VoteRepository
 from users.user_repository import UserDbRepository
 
-template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-jinja_env = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(template_dir),
-    autoescape=True)
 
 comments = CommentDbRepository()
 entries = EntryDbRepository()
 users = UserDbRepository()
 votes = VoteRepository()
+
+
+class EntryViewModel:
+    def __init__(
+            self, key,
+            subject, content, date, modified,
+            upvotes, downvotes,
+            permissions):
+        self.key = key
+        self.subject = subject
+        self.content = content
+        self.date = date
+        self.modified = modified
+        self.upvotes = upvotes
+        self.downvotes = downvotes
+        self.can = permissions
+
+    def content_as_html(self):
+        return self.content.replace('\n', '<br>')
 
 
 class CommentViewModel:
@@ -32,6 +43,9 @@ class CommentViewModel:
         self.modified = modified
         self.can = permissions
 
+    def content_as_html(self):
+        return self.content.replace('\n', '<br>')
+
 
 class EntryCreateHandler(EntryHandler):
     def get(self):
@@ -42,7 +56,7 @@ class EntryCreateHandler(EntryHandler):
             self.redirect('/login')
             return
 
-        self.render(jinja_env, "newpost.html")
+        self.render("newpost.html")
 
     def post(self):
 
@@ -56,7 +70,7 @@ class EntryCreateHandler(EntryHandler):
         content = self.request.get('content', '')
 
         subject_valid = subject and 2 < len(subject) < 128
-        content_valid = content and 2 < len(content) < 1024 * 1
+        content_valid = content and 2 < len(content) < 1024 * 4
 
         subject_error = '' if subject_valid else 'A valid subject is required'
         content_error = '' if content_valid else 'Valid content is required'
@@ -69,11 +83,12 @@ class EntryCreateHandler(EntryHandler):
 
             self.redirect(self.urlKeyForKey(new_entry_key))
         else:
-            self.render(jinja_env, "newpost.html",
-                        subject=subject,
-                        content=content,
-                        subject_error=subject_error,
-                        content_error=content_error)
+            self.render(
+                "newpost.html",
+                subject=subject,
+                content=content,
+                subject_error=subject_error,
+                content_error=content_error)
 
 
 class EntryReadHandler(EntryHandler):
@@ -85,7 +100,19 @@ class EntryReadHandler(EntryHandler):
             self.error(404)
             return
 
-        def fromModel(comment):
+        def fromEntryDb(model):
+            """
+            :type: model: EntryDb
+            :rtype: EntryViewModel
+            """
+            return EntryViewModel(
+                model.key,
+                model.subject, model.content,
+                model.date, model.modified,
+                model.upvotes, model.downvotes,
+                self.getUserPermissionsOnEntry(user, model))
+
+        def fromCommentDb(comment):
             """
             :type: comment: CommentDb
             :rtype: CommentViewModel
@@ -93,13 +120,14 @@ class EntryReadHandler(EntryHandler):
             return CommentViewModel(
                 comment.key,
                 comment.creator_id, comment.creator_username,
-                comment.content, comment.modified, comment.modified,
+                comment.content, comment.date, comment.modified,
                 self.getUserPermissionsOnComment(user, comment))
 
-        self.render(jinja_env, "permalink.html",
-                    entry=entry,
-                    can=self.getUserPermissionsOnEntry(user, entry),
-                    comments=map(fromModel, comments.get_all_for(entry)))
+        self.render(
+            "permalink.html",
+            entry=fromEntryDb(entry),
+            can=self.getUserPermissionsOnEntry(user, entry),
+            comments=map(fromCommentDb, comments.get_all_for(entry)))
 
 
 class EntryUpdateHandler(EntryHandler):
@@ -120,8 +148,9 @@ class EntryUpdateHandler(EntryHandler):
             self.error(403)
             return
 
-        self.render(jinja_env, "editpost.html",
-                    entry=entry)
+        self.render(
+            "editpost.html",
+            entry=entry)
 
     def post(self, url_string):
 
@@ -144,7 +173,7 @@ class EntryUpdateHandler(EntryHandler):
         content = self.request.get('content', '')
 
         subject_valid = subject and 2 < len(subject) < 128
-        content_valid = content and 2 < len(content) < 1024 * 1
+        content_valid = content and 2 < len(content) < 1024 * 4
 
         subject_error = '' if subject_valid else 'A valid subject is required'
         content_error = '' if content_valid else 'Valid content is required'
@@ -157,10 +186,11 @@ class EntryUpdateHandler(EntryHandler):
 
             self.redirect(self.urlFor(entry))
         else:
-            self.render(jinja_env, "editpost.html",
-                        entry=entry,
-                        subject_error=subject_error,
-                        content_error=content_error)
+            self.render(
+                "editpost.html",
+                entry=entry,
+                subject_error=subject_error,
+                content_error=content_error)
 
 
 class EntryDeleteHandler(EntryHandler):
@@ -273,12 +303,13 @@ class CommentCreateHandler(EntryHandler):
 
             self.redirect(self.urlFor(entry))
         else:
-            self.render(jinja_env, "permalink.html",
-                        entry=entry,
-                        can=self.getUserPermissionsOnEntry(user, entry),
-                        comments=comments.get_all_for(entry),
-                        content=content,
-                        content_error=content_error)
+            self.render(
+                "permalink.html",
+                entry=entry,
+                can=self.getUserPermissionsOnEntry(user, entry),
+                comments=comments.get_all_for(entry),
+                content=content,
+                content_error=content_error)
 
 
 class CommentUpdateHandler(EntryHandler):
@@ -299,8 +330,9 @@ class CommentUpdateHandler(EntryHandler):
             self.error(403)
             return
 
-        self.render(jinja_env, "editcomment.html",
-                    comment=comment)
+        self.render(
+            "editcomment.html",
+            comment=comment)
 
     def post(self, url_string):
 
@@ -330,9 +362,10 @@ class CommentUpdateHandler(EntryHandler):
 
             self.redirect(self.urlForCommentsEntry(comment))
         else:
-            self.render(jinja_env, "editcomment.html",
-                        comment=comment,
-                        content_error=content_error)
+            self.render(
+                "editcomment.html",
+                comment=comment,
+                content_error=content_error)
 
 
 class CommentDeleteHandler(EntryHandler):

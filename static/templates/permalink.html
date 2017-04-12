@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+
+<main id="main">
+
+    <!-- POST HEADER -->
+    <div class="post-heading">
+
+        <h1 class="post-subject">
+            {{ entry.subject }}
+        </h1>
+
+        <span class="post-meta">
+            Posted by {{ entry.key.parent().id() }}
+            on {{ entry.modified | dtf('%c') }}
+        </span>
+    </div>
+
+    <!-- POST TOOLBAR -->
+    {% if authenticated and (can.edit or can.delete) %}
+    <div class="{{ 'uk-button-group' if can.update and can.delete else '' }}">
+
+        {% if can.edit %}
+        <!-- EDIT POST -->
+        <a class="btn uk-button"
+           href="/posts/{{entry.key.urlsafe()}}/edit">
+            <i class="fa fa-pencil" aria-hidden="true"></i>
+            edit <span class="sr-only"> post {{entry.subject}}</span>
+        </a>
+        {% endif %}
+
+        {% if can.delete %}
+        <!-- DELETE POST -->
+        <form action="/posts/{{entry.key.urlsafe()}}/delete" method="POST">
+            <button type="submit" class="btn uk-button">
+                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                delete <span class="sr-only"> post {{entry.subject}}</span>
+            </button>
+        </form>
+        {% endif %}
+
+    </div>
+    {% endif %}
+
+    <!-- POST CONTENT -->
+    <article data-id="{{entry.key.urlsafe()}}">
+
+        <!-- ARTICLE SECTION -->
+        <div class="">
+            <div class="">
+                {{ entry.content_as_html()|safe }}
+            </div>
+        </div>
+
+        <!-- VOTING SECTION -->
+        {% include 'votes.html' %}
+
+        <!-- COMMENTS SECTION -->
+        {% include 'comments.html' %}
+
+    </article>
+
+</main>
+{% endblock %}

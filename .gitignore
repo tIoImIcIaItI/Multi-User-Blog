@@ -1,4 +1,8 @@
+# Compiled Python Files
 **/*.pyc
-_links/
 
-\.idea/
+# PyCharm Project Folder
+.idea/
+
+# my stuff
+_links/

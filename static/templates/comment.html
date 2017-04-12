@@ -1,0 +1,30 @@
+<li class="comment-container"
+    data-id="{{comment.key.urlsafe()}}">
+    Comment by {{ comment.username }}
+    on {{ comment.modified | dtf('%c') }}
+
+    <p>{{ comment.content_as_html() | safe() }}</p>
+
+    {% if comment.can.edit %}
+    <a class="btn uk-button"
+       href="/comments/{{comment.key.urlsafe()}}/edit">
+        <i class="fa fa-pencil" aria-hidden="true"></i>
+        edit
+    </a>
+    {% endif %}
+
+    {% if comment.can.delete %}
+    <form class=""
+          action="/comments/{{comment.key.urlsafe()}}/delete"
+          method="POST">
+        <input type="hidden" name="id"
+               value="{{comment.key.urlsafe()}}"/>
+        <button class="btn uk-button"
+                type="submit">
+            <i class="fa fa-trash-o" aria-hidden="true"></i>
+            delete
+        </button>
+    </form>
+    {% endif %}
+
+</li>
