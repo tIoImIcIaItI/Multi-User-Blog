@@ -4,43 +4,49 @@
 <main id="main">
 
     <!-- POST HEADER -->
-    <div class="post-heading">
+    <header class="post-heading uk-clearfix">
 
-        <h1 class="post-subject">
-            {{ entry.subject }}
-        </h1>
+        <div class="uk-float-left">
+            <h1 class="post-subject">
+                {{ entry.subject }}
+            </h1>
 
-        <span class="post-meta">
-            Posted by {{ entry.key.parent().id() }}
-            on {{ entry.modified | dtf('%c') }}
-        </span>
-    </div>
+            <span class="post-meta">
+                Posted by {{ entry.key.parent().id() }}
+                on {{ entry.modified | dtf('%c') }}
+            </span>
+        </div>
 
-    <!-- POST TOOLBAR -->
-    {% if authenticated and (can.edit or can.delete) %}
-    <div class="{{ 'uk-button-group' if can.update and can.delete else '' }}">
+        <!-- POST TOOLBAR -->
+        {% if authenticated and (can.edit or can.delete) %}
+        <div class="uk-float-right {{ 'uk-button-group' if can.edit and can.delete else '' }}">
 
-        {% if can.edit %}
-        <!-- EDIT POST -->
-        <a class="btn uk-button"
-           href="/posts/{{entry.key.urlsafe()}}/edit">
-            <i class="fa fa-pencil" aria-hidden="true"></i>
-            edit <span class="sr-only"> post {{entry.subject}}</span>
-        </a>
+            {% if can.edit %}
+            <!-- EDIT POST -->
+            <a class="btn uk-button uk-margin-small-top"
+               title="edit post"
+               href="/posts/{{entry.key.urlsafe()}}/edit">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+                <span class="sr-only">edit post</span>
+            </a>
+            {% endif %}
+
+            {% if can.delete %}
+            <!-- DELETE POST -->
+            <form action="/posts/{{entry.key.urlsafe()}}/delete" method="POST">
+                <button type="submit" class="btn uk-button uk-margin-small-top"
+                        title="delete post">
+                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                    <span class="sr-only">delete post</span>
+                </button>
+            </form>
+            {% endif %}
+
+        </div>
         {% endif %}
 
-        {% if can.delete %}
-        <!-- DELETE POST -->
-        <form action="/posts/{{entry.key.urlsafe()}}/delete" method="POST">
-            <button type="submit" class="btn uk-button">
-                <i class="fa fa-trash-o" aria-hidden="true"></i>
-                delete <span class="sr-only"> post {{entry.subject}}</span>
-            </button>
-        </form>
-        {% endif %}
+    </header>
 
-    </div>
-    {% endif %}
 
     <!-- POST CONTENT -->
     <article data-id="{{entry.key.urlsafe()}}">
@@ -53,7 +59,7 @@
         </div>
 
         <!-- ENGAGEMENTS SECTION -->
-        <div class="">
+        <div class="uk-margin">
             <!-- VOTING SECTION -->
             {% include 'votes.html' %}
 

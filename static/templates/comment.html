@@ -17,24 +17,23 @@
 
                 <!-- EDIT COMMENT -->
                 {% if comment.can.edit %}
-                <a class="btn uk-button"
+                <a class="btn uk-button" title="edit comment"
                    href="/comments/{{comment.key.urlsafe()}}/edit">
                     <i class="fa fa-pencil" aria-hidden="true"></i>
-                    <span class="sr-only">edit</span>
+                    <span class="sr-only">edit comment</span>
                 </a>
                 {% endif %}
 
                 <!-- DELETE COMMENT -->
                 {% if comment.can.delete %}
-                <form class=""
-                      action="/comments/{{comment.key.urlsafe()}}/delete"
+                <form action="/comments/{{comment.key.urlsafe()}}/delete"
                       method="POST">
                     <input type="hidden" name="id"
                            value="{{comment.key.urlsafe()}}"/>
-                    <button class="btn uk-button"
-                            type="submit">
+                    <button class="btn uk-button" type="submit"
+                            title="delete comment">
                         <i class="fa fa-trash-o" aria-hidden="true"></i>
-                        <span class="sr-only">delete</span>
+                        <span class="sr-only">delete comment</span>
                     </button>
                 </form>
                 {% endif %}

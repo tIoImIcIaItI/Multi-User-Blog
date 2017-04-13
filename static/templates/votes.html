@@ -11,7 +11,9 @@
               method="POST">
             <input type="hidden" name="id"
                    value="{{entry.key.urlsafe()}}"/>
-            <button class="btn uk-button" type="submit">upvote</button>
+            <button title="up vote"
+                    class="btn uk-button" type="submit">upvote
+            </button>
         </form>
         {% endif %}
     </div>
@@ -27,7 +29,9 @@
               method="POST">
             <input type="hidden" name="id"
                    value="{{entry.key.urlsafe()}}"/>
-            <button class="btn uk-button" type="submit">downvote</button>
+            <button title="up vote"
+                    class="btn uk-button" type="submit">downvote
+            </button>
         </form>
         {% endif %}
     </div>
@@ -36,7 +40,8 @@
     <!-- VOTE SQUEEZE -->
     <div class="vote-squeeze">
         Your opinion matters!
-        <a href="/login">Sign in</a> or <a href="/signup">sign up</a> to vote for this post
+        <a href="/login">Sign in</a> or <a href="/signup">sign up</a> to vote
+        for this post
     </div>
     {% endif %}
 
