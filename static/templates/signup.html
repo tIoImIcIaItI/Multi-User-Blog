@@ -15,7 +15,7 @@
 
             <label class="uk-form-label" for="username">Username</label>
 
-            <input class="form-control"
+            <input class=""
                    data-autofocus required aria-required="true"
                    type="text" id="username" name="username"
                    value="{{username or ''}}" placeholder="username"/>
@@ -36,10 +36,10 @@
 
             <label class="uk-form-label" for="password">Password</label>
 
-            <input class="form-control"
+            <input class="uk-form-password {{ 'uk-form-danger' if password_error else '' }}"
                    required aria-required="true"
                    type="password" id="password" name="password"
-                   value="{{password or ''}}" placeholder="password"/>
+                   value="" placeholder="password"/>
 
             <div id="password-error" data-error-for="password"
                  class="validation-error uk-text-danger invisible"></div>
@@ -57,10 +57,10 @@
 
             <label class="uk-form-label" for="verify">Re-enter Password</label>
 
-            <input class="form-control"
+            <input class="uk-form-password {{ 'uk-form-danger' if verify_error else '' }}"
                    required aria-required="true"
                    type="password" id="verify" name="verify"
-                   value="{{verify or ''}}" placeholder="enter your password again"/>
+                   value="" placeholder="enter your password again"/>
 
             <div id="verify-error" data-error-for="verify"
                  class="validation-error uk-text-danger invisible"></div>
@@ -78,7 +78,7 @@
 
             <label class="uk-form-label" for="email">Email</label>
 
-            <input class="form-control"
+            <input class=""
                    required aria-required="true"
                    type="text" id="email" name="email" value="{{email or ''}}"
                    placeholder="email"/>

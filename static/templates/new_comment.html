@@ -12,13 +12,11 @@
 
             <label class="uk-form-label sr-only" for="content">Comment</label>
 
-            <i class="fa fa-quote-left" aria-hidden="true"></i>
-            <textarea class="form-control"
+            <textarea class=""
                       required aria-required="true"
                       rows="4"
                       id="content" name="content"
                       placeholder="enter your comment here">{{content|safe() or ''}}</textarea>
-            <i class="fa fa-quote-right" aria-hidden="true"></i>
 
             <div id="content-error" data-error-for="content"
                  class="validation-error uk-text-danger invisible"></div>
@@ -35,6 +33,7 @@
         <fieldset class="uk-form-row">
 
             <button class="uk-button" type='submit'>
+                <i class="fa fa-plus" aria-hidden="true"></i>
                 Add Comment
             </button>
 

@@ -17,7 +17,7 @@
 
                 <!-- EDIT COMMENT -->
                 {% if comment.can.edit %}
-                <a class="btn uk-button" title="edit comment"
+                <a class="btn uk-button" title="edit comment" uk-tooltip
                    href="/comments/{{comment.key.urlsafe()}}/edit">
                     <i class="fa fa-pencil" aria-hidden="true"></i>
                     <span class="sr-only">edit comment</span>
@@ -31,7 +31,7 @@
                     <input type="hidden" name="id"
                            value="{{comment.key.urlsafe()}}"/>
                     <button class="btn uk-button" type="submit"
-                            title="delete comment">
+                            title="delete comment" uk-tooltip>
                         <i class="fa fa-trash-o" aria-hidden="true"></i>
                         <span class="sr-only">delete comment</span>
                     </button>

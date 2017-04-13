@@ -1,44 +1,49 @@
 <div class="votes-container">
 
     <!-- UP VOTES -->
-    <div>
-        <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
-        <span class="sr-only">up votes</span>
-        {{ entry.upvotes or 0}}
-
-        {% if can.vote %}
-        <form action="/posts/{{entry.key.urlsafe()}}/upvote"
-              method="POST">
-            <input type="hidden" name="id"
-                   value="{{entry.key.urlsafe()}}"/>
-            <button title="up vote"
-                    class="btn uk-button" type="submit">upvote
-            </button>
-        </form>
-        {% endif %}
-    </div>
+    {% if can.vote %}
+    <form action="/posts/{{entry.key.urlsafe()}}/upvote"
+          method="POST">
+        <input type="hidden" name="id"
+               value="{{entry.key.urlsafe()}}"/>
+        <button title="up vote" uk-tooltip
+                class="btn uk-button" type="submit">
+            <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+            <span class="sr-only">up votes</span>
+            {{ entry.upvotes or 0}}
+            upvote
+        </button>
+    </form>
+    {% else %}
+    <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+    <span class="sr-only">up votes</span>
+    {{ entry.upvotes or 0}}
+    {% endif %}
 
     <!-- DOWN VOTES -->
-    <div>
-        <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
-        <span class="sr-only">down votes</span>
-        {{ entry.downvotes or 0}}
-
-        {% if can.vote %}
-        <form action="/posts/{{entry.key.urlsafe()}}/downvote"
-              method="POST">
-            <input type="hidden" name="id"
-                   value="{{entry.key.urlsafe()}}"/>
-            <button title="up vote"
-                    class="btn uk-button" type="submit">downvote
-            </button>
-        </form>
-        {% endif %}
-    </div>
+    {% if can.vote %}
+    <form action="/posts/{{entry.key.urlsafe()}}/downvote"
+          method="POST">
+        <input type="hidden" name="id"
+               value="{{entry.key.urlsafe()}}"/>
+        <button title="down vote" uk-tooltip
+                class="btn uk-button" type="submit">
+            <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
+            <span class="sr-only">down votes</span>
+            {{ entry.downvotes or 0}}
+            downvote
+        </button>
+    </form>
+    {% else %}
+    <i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
+    <span class="sr-only">down votes</span>
+    {{ entry.downvotes or 0}}
+    {% endif %}
 
     {% if not authenticated %}
     <!-- VOTE SQUEEZE -->
-    <div class="vote-squeeze">
+    <div class="squeeze vote-squeeze uk-alert">
+        <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
         Your opinion matters!
         <a href="/login">Sign in</a> or <a href="/signup">sign up</a> to vote
         for this post

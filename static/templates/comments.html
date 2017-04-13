@@ -1,23 +1,25 @@
 <div class="comments-container uk-margin">
 
-    <!-- COMMENTS LIST SECTION -->
-    <ul class="uk-comment-list">
-        {% for comment in comments %}
-            {% include 'comment.html' %}
-        {% endfor %}
-    </ul>
-
     {% if can.comment %}
-        <!-- NEW COMMENT FORM SECTION -->
-        {% include 'new_comment.html' %}
+    <!-- NEW COMMENT FORM SECTION -->
+    {% include 'new_comment.html' %}
     {% endif %}
 
     {% if not authenticated %}
     <!-- COMMENT SQUEEZE -->
-    <div class="comment-squeeze">
+    <div class="squeeze comment-squeeze uk-alert">
+		<i class="fa fa-lightbulb-o" aria-hidden="true"></i>
         Join the discussion!
-        <a href="/login">Sign in</a> or <a href="/signup">sign up</a> to comment on this post
+        <a href="/login">Sign in</a> or <a href="/signup">sign up</a> to comment
+        on this post
     </div>
     {% endif %}
+
+    <!-- COMMENTS LIST SECTION -->
+    <ul class="uk-comment-list">
+        {% for comment in comments %}
+        {% include 'comment.html' %}
+        {% endfor %}
+    </ul>
 
 </div>

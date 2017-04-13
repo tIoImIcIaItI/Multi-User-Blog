@@ -36,7 +36,7 @@
 
             <label class="uk-form-label" for="password">Password</label>
 
-            <input class="{{ 'uk-form-danger' if password_error else '' }}"
+            <input class="uk-form-password {{ 'uk-form-danger' if password_error else '' }}"
                    required aria-required="true"
                    type="password" id="password" name="password"
                    value="{{password or ''}}" placeholder="password"/>

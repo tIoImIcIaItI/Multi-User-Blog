@@ -1,6 +1,6 @@
-<li class="uk-width-large-1-3 uk-width-medium-1-2 uk-width-small-1-1">
+<li class="uk-width-large-1-2 uk-width-medium-1-2 uk-width-small-1-1">
 
-    <div class="uk-panel uk-panel-hover uk-panel-space">
+    <article class="uk-panel uk-panel-hover uk-panel-space">
 
         <!-- Subject -->
         <h2 class="uk-panel-title post-subject">
@@ -10,7 +10,7 @@
         </h2>
 
         <!-- Meta-data -->
-        <p class="post-meta">
+        <p class="uk-article-meta">
             Posted by {{ entry.key.parent().id() }}
             on {{ entry.modified | dtf('%c') }}
         </p>
@@ -20,6 +20,6 @@
             {{ entry.content | truncate(160) }}
         </div>
 
-    </div>
+    </article>
 
 </li>

@@ -3,13 +3,7 @@
 
 <main id="main">
 
-    <div class="post-heading">
-        <h1>{{ entry.subject }}</h1>
-        <span class="post-meta">
-            Posted by {{ entry.key.parent().id() }}
-            on {{ entry.modified | dtf('%c') }}
-        </span>
-    </div>
+    <h1>Edit Post</h1>
 
     <form id="edit-post-form"
           class="uk-form uk-form-stacked" data-uk-margin
@@ -44,7 +38,7 @@
             <textarea class="{{ 'uk-form-danger' if content_error else '' }}"
                       required aria-required="true"
                       rows="10"
-                      id="content" class="form-control" name="content">
+                      id="content" class="" name="content">
                 {{entry.content}}
             </textarea>
 
