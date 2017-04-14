@@ -9,8 +9,9 @@ users = UserDbRepository()
 
 class LoginPage(Handler):
     def get(self):
-        self.render("login.html",
-                    suppressLogin=True)
+        self.render(
+            "login.html",
+            suppressLogin=True)
 
     def post(self):
         username = self.request.get('username', '')

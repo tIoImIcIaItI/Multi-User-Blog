@@ -16,6 +16,8 @@ class EntryCreateHandler(EntryHandler):
         user = self.getUserFromCookie()
         if not user:
             # self.error(401)
+            self.add_flash(
+                "Sign in or sign up to create your own posts")
             self.redirect('/login')
             return
 
@@ -26,6 +28,8 @@ class EntryCreateHandler(EntryHandler):
         user = self.getUserFromCookie()
         if not user:
             # self.error(401)
+            self.add_flash(
+                "Sign in or sign up to create your own posts")
             self.redirect('/login')
             return
 
@@ -54,17 +58,20 @@ class EntryReadHandler(EntryHandler):
 
         entry = self.getEntryFrom(url_string)
         if not entry:
-            self.error(404)
+            # self.error(404)
+            self.add_flash(
+                "The post could not be found")
+            self.redirect("/")
             return
 
-        def fromCommentDb(arg):
+        def from_comment(arg):
             return self.fromCommentDb(user, arg)
 
         self.render(
             "permalink.html",
             entry=self.fromEntryDb(user, entry),
             can=self.getUserPermissionsOnEntry(user, entry),
-            comments=map(fromCommentDb, comments.get_all_for(entry)))
+            comments=map(from_comment, comments.get_all_for(entry)))
 
 
 class EntryUpdateHandler(EntryHandler):
@@ -73,16 +80,24 @@ class EntryUpdateHandler(EntryHandler):
         user = self.getUserFromCookie()
         if not user:
             # self.error(401)
+            self.add_flash(
+                "Sign in to edit your posts")
             self.redirect('/login')
             return
 
         entry = self.getEntryFrom(url_string)
         if not entry:
-            self.error(404)
+            # self.error(404)
+            self.add_flash(
+                "The post could not be found")
+            self.redirect("/")
             return
 
         if not self.getUserPermissionsOnEntry(user, entry).edit:
-            self.error(403)
+            # self.error(403)
+            self.add_flash(
+                "You may edit only your posts")
+            self.redirect(self.urlFor(entry))
             return
 
         self.render(
@@ -94,16 +109,24 @@ class EntryUpdateHandler(EntryHandler):
         user = self.getUserFromCookie()
         if not user:
             # self.error(401)
+            self.add_flash(
+                "Sign in to edit your posts")
             self.redirect('/login')
             return
 
         entry = self.getEntryFrom(url_string)
         if not entry:
-            self.error(404)
+            # self.error(404)
+            self.add_flash(
+                "The post could not be found")
+            self.redirect("/")
             return
 
         if not self.getUserPermissionsOnEntry(user, entry).edit:
-            self.error(403)
+            # self.error(403)
+            self.add_flash(
+                "You may edit only your posts")
+            self.redirect(self.urlFor(entry))
             return
 
         (subject, subject_error, content, content_error) = \
@@ -130,16 +153,24 @@ class EntryDeleteHandler(EntryHandler):
         user = self.getUserFromCookie()
         if not user:
             # self.error(401)
+            self.add_flash(
+                "Sign in to delete your posts")
             self.redirect('/login')
             return
 
         entry = self.getEntryFrom(url_string)
         if not entry:
-            self.error(404)
+            # self.error(404)
+            self.add_flash(
+                "The post could not be found")
+            self.redirect("/")
             return
 
         if not self.getUserPermissionsOnEntry(user, entry).delete:
-            self.error(403)
+            # self.error(403)
+            self.add_flash(
+                "You may delete only your posts")
+            self.redirect(self.urlFor(entry))
             return
 
         entries.delete(entry)
@@ -153,16 +184,24 @@ class EntryUpvoteHandler(EntryHandler):
         user = self.getUserFromCookie()
         if not user:
             # self.error(401)
+            self.add_flash(
+                "Sign in to vote for posts")
             self.redirect('/login')
             return
 
         entry = self.getEntryFrom(url_string)
         if not entry:
-            self.error(404)
+            # self.error(404)
+            self.add_flash(
+                "The post could not be found")
+            self.redirect("/")
             return
 
         if not self.getUserPermissionsOnEntry(user, entry).vote:
-            self.error(403)
+            # self.error(403)
+            self.add_flash(
+                "You may not vote for your own posts")
+            self.redirect(self.urlFor(entry))
             return
 
         # increment the upvote count
@@ -181,16 +220,24 @@ class EntryDownvoteHandler(EntryHandler):
         user = self.getUserFromCookie()
         if not user:
             # self.error(401)
+            self.add_flash(
+                "Sign in to vote for posts")
             self.redirect('/login')
             return
 
         entry = self.getEntryFrom(url_string)
         if not entry:
-            self.error(404)
+            # self.error(404)
+            self.add_flash(
+                "The post could not be found")
+            self.redirect("/")
             return
 
         if not self.getUserPermissionsOnEntry(user, entry).vote:
-            self.error(403)
+            # self.error(403)
+            self.add_flash(
+                "You may not vote for your own posts")
+            self.redirect(self.urlFor(entry))
             return
 
         # increment the downvote count
@@ -209,29 +256,37 @@ class CommentCreateHandler(EntryHandler):
         user = self.getUserFromCookie()
         if not user:
             # self.error(401)
+            self.add_flash(
+                "Sign in or sign up to comment on posts")
             self.redirect('/login')
             return
 
         entry = self.getEntryFrom(url_string)
         if not entry:
-            self.error(404)
+            # self.error(404)
+            self.add_flash(
+                "The post could not be found")
+            self.redirect("/")
             return
 
         if not self.getUserPermissionsOnEntry(user, entry).comment:
-            self.error(403)
+            # self.error(403)
+            self.add_flash(
+                "You may not comment on this post")
+            self.redirect(self.urlFor(entry))
             return
 
         (content, content_error) = \
             self.validateCommentForm()
 
-        def fromCommentDb(arg):
+        def from_comment(arg):
             return self.fromCommentDb(user, arg)
 
         if content_error is None:
             comment = comments.new_for(
                 user, entry, content=content)
 
-            key = comments.create(comment)
+            comments.create(comment)
 
             self.redirect(self.urlFor(entry))
         else:
@@ -239,7 +294,7 @@ class CommentCreateHandler(EntryHandler):
                 "permalink.html",
                 entry=self.fromEntryDb(user, entry),
                 can=self.getUserPermissionsOnEntry(user, entry),
-                comments=map(fromCommentDb, comments.get_all_for(entry)),
+                comments=map(from_comment, comments.get_all_for(entry)),
                 content=content,
                 content_error=content_error)
 
@@ -250,16 +305,24 @@ class CommentUpdateHandler(EntryHandler):
         user = self.getUserFromCookie()
         if not user:
             # self.error(401)
+            self.add_flash(
+                "Sign in to edit your comments")
             self.redirect('/login')
             return
 
         comment = self.getCommentFrom(url_string)
         if not comment:
-            self.error(404)
+            # self.error(404)
+            self.add_flash(
+                "The comment could not be found")
+            self.redirect("/")
             return
 
         if not self.getUserPermissionsOnComment(user, comment).edit:
-            self.error(403)
+            # self.error(403)
+            self.add_flash(
+                "You may edit only your own comments")
+            self.redirect(self.urlFor(comment))
             return
 
         self.render(
@@ -271,23 +334,30 @@ class CommentUpdateHandler(EntryHandler):
         user = self.getUserFromCookie()
         if not user:
             # self.error(401)
+            self.add_flash(
+                "Sign in to edit your comments")
             self.redirect('/login')
             return
 
         comment = self.getCommentFrom(url_string)
         if not comment:
-            self.error(404)
+            # self.error(404)
+            self.add_flash(
+                "The comment could not be found")
+            self.redirect("/")
             return
 
         if not self.getUserPermissionsOnComment(user, comment).edit:
-            self.error(403)
+            # self.error(403)
+            self.add_flash(
+                "You may edit only your own comments")
+            self.redirect(self.urlFor(comment))
             return
 
-        content = self.request.get('content', '')
-        content_valid = content and 2 < len(content) < 1024 * 1
-        content_error = '' if content_valid else 'Valid content is required'
+        (content, content_error) = \
+            self.validateCommentForm()
 
-        if content_valid:
+        if content_error is None:
             comment.content = content
 
             comments.update(comment)
@@ -306,16 +376,24 @@ class CommentDeleteHandler(EntryHandler):
         user = self.getUserFromCookie()
         if not user:
             # self.error(401)
+            self.add_flash(
+                "Sign in to delete your comments")
             self.redirect('/login')
             return
 
         comment = self.getCommentFrom(url_string)
         if not comment:
-            self.error(404)
+            # self.error(404)
+            self.add_flash(
+                "The comment could not be found")
+            self.redirect("/")
             return
 
         if not self.getUserPermissionsOnComment(user, comment).delete:
-            self.error(403)
+            # self.error(403)
+            self.add_flash(
+                "You may delete only your own comments")
+            self.redirect(self.urlFor(comment))
             return
 
         comments.delete(comment)

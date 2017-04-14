@@ -1,6 +1,8 @@
 import os
 import jinja2
 import webapp2
+from webapp2_extras import sessions
+
 from users.user_cookie import UserCookie
 from users.user_repository import UserDbRepository
 
@@ -15,10 +17,10 @@ class Handler(webapp2.RequestHandler):
     def __init__(self, request=None, response=None):
         super(Handler, self).__init__(request, response)
 
+        # Initialize the template engine
+
         def datetimeformat(value, fmt='%H:%M / %d-%m-%Y'):
             return value.strftime(fmt)
-
-        # Initialize the template engine
 
         self.template_dir = os.path.join(
             os.path.dirname(__file__),
@@ -29,6 +31,30 @@ class Handler(webapp2.RequestHandler):
             autoescape=True)
 
         self.jinja_env.filters['dtf'] = datetimeformat
+
+    # https://prahladyeri.wordpress.com/2013/11/21/how-to-handle-sessions-in
+    # -google-app-engine/
+    def dispatch(self):
+        # Get a session store for this request.
+        self.session_store = sessions.get_store(request=self.request)
+        try:
+            # Dispatch the request.
+            webapp2.RequestHandler.dispatch(self)
+        finally:
+            # Save all sessions.
+            self.session_store.save_sessions(self.response)
+
+    # https://prahladyeri.wordpress.com/2013/11/21/how-to-handle-sessions-in
+    # -google-app-engine/
+    @webapp2.cached_property
+    def session(self):
+        # Returns a session using the default cookie key.
+        sess = self.session_store.get_session()
+        return sess
+
+    def add_flash(self, message, level=None):
+        self.session_store.get_session().\
+            add_flash(message, level)
 
     def getUsernameFromCookie(self):
         """
@@ -77,5 +103,9 @@ class Handler(webapp2.RequestHandler):
 
         if 'authenticated' not in params:
             params['authenticated'] = username is not None
+
+        if 'messages' not in params:
+            params['messages'] = \
+                self.session_store.get_session().get_flashes()
 
         self.write(self.render_str(template, **params))
