@@ -6,8 +6,19 @@ from entry import EntryDb
 
 
 class EntryDbRepository:
+    """
+    Implements a simple repository pattern over EntryDb entities 
+    """
+
+    def __init__(self):
+        pass
+
     @staticmethod
     def get_all():
+        """
+        Returns all entries sorted in reverse chronological order
+        (newest first)
+        """
         return EntryDb.query().order(-EntryDb.date)
 
     @staticmethod
@@ -28,6 +39,9 @@ class EntryDbRepository:
 
     @staticmethod
     def delete_by_url(url_string):
+        """
+        :type url_string: String
+        """
         res = EntryDbRepository.key_from(url_string).delete()
         time.sleep(0.5)
         return res
@@ -35,6 +49,7 @@ class EntryDbRepository:
     @staticmethod
     def new_for(user, *args, **kwargs):
         """
+        Creates a new entry for the given user 
         :rtype: EntryDb
         :type user: UserDb
         """

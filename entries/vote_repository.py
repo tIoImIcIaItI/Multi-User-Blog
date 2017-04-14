@@ -1,11 +1,16 @@
 import time
-
 import logging
-
 from entry import EntryDb, UserEntryVoteRecordDb
 
 
 class VoteRepository:
+    """
+    Implements a simple repository pattern over UserEntryVoteRecordDb entities 
+    """
+
+    def __init__(self):
+        pass
+
     @staticmethod
     def get_by_entry_for_user(user, entry):
         """
@@ -14,8 +19,8 @@ class VoteRepository:
 
         logging.info(entry.key.id())
         logging.info(
-            UserEntryVoteRecordDb. \
-            query(ancestor=user.key). \
+            UserEntryVoteRecordDb.
+            query(ancestor=user.key).
             fetch())
 
         return UserEntryVoteRecordDb. \

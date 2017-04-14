@@ -1,11 +1,9 @@
-import logging
-
 from entries.comment_repository import CommentDbRepository
 from entries.entry import EntryDb
 from entries.entry_repository import EntryDbRepository
 from entries.vote_repository import VoteRepository
 from handler import Handler
-from permissions import EntryPermissions, CommentPermissions
+from permissions import CommentPermissions, EntryPermissions
 from users.user_repository import UserDbRepository
 
 entries = EntryDbRepository()
@@ -15,12 +13,9 @@ votes = VoteRepository()
 
 
 class EntryHandler(Handler):
-    def getUserFromCookie(self):
-        username = self.getUsernameFromCookie()
-        return users.get_by_username(username) if username else None
-
-    def getUser(self):
-        return self.getUserFromCookie()
+    """
+    Adds utility methods for endpoints dealing with entries and their authors
+    """
 
     @staticmethod
     def urlKeyFor(entry):

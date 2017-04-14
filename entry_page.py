@@ -50,7 +50,7 @@ class CommentViewModel:
 class EntryCreateHandler(EntryHandler):
     def get(self):
 
-        user = self.getUser()
+        user = self.getUserFromCookie()
         if not user:
             # self.error(401)
             self.redirect('/login')
@@ -60,7 +60,7 @@ class EntryCreateHandler(EntryHandler):
 
     def post(self):
 
-        user = self.getUser()
+        user = self.getUserFromCookie()
         if not user:
             # self.error(401)
             self.redirect('/login')
@@ -93,7 +93,7 @@ class EntryCreateHandler(EntryHandler):
 
 class EntryReadHandler(EntryHandler):
     def get(self, url_string):
-        user = self.getUser()
+        user = self.getUserFromCookie()
 
         entry = self.getEntryFrom(url_string)
         if not entry:
@@ -133,7 +133,7 @@ class EntryReadHandler(EntryHandler):
 class EntryUpdateHandler(EntryHandler):
     def get(self, url_string):
 
-        user = self.getUser()
+        user = self.getUserFromCookie()
         if not user:
             # self.error(401)
             self.redirect('/login')
@@ -154,7 +154,7 @@ class EntryUpdateHandler(EntryHandler):
 
     def post(self, url_string):
 
-        user = self.getUser()
+        user = self.getUserFromCookie()
         if not user:
             # self.error(401)
             self.redirect('/login')
@@ -196,7 +196,7 @@ class EntryUpdateHandler(EntryHandler):
 class EntryDeleteHandler(EntryHandler):
     def post(self, url_string):
 
-        user = self.getUser()
+        user = self.getUserFromCookie()
         if not user:
             # self.error(401)
             self.redirect('/login')
@@ -219,7 +219,7 @@ class EntryDeleteHandler(EntryHandler):
 class EntryUpvoteHandler(EntryHandler):
     def post(self, url_string):
 
-        user = self.getUser()
+        user = self.getUserFromCookie()
         if not user:
             # self.error(401)
             self.redirect('/login')
@@ -247,7 +247,7 @@ class EntryUpvoteHandler(EntryHandler):
 class EntryDownvoteHandler(EntryHandler):
     def post(self, url_string):
 
-        user = self.getUser()
+        user = self.getUserFromCookie()
         if not user:
             # self.error(401)
             self.redirect('/login')
@@ -275,7 +275,7 @@ class EntryDownvoteHandler(EntryHandler):
 class CommentCreateHandler(EntryHandler):
     def post(self, url_string):
 
-        user = self.getUser()
+        user = self.getUserFromCookie()
         if not user:
             # self.error(401)
             self.redirect('/login')
@@ -315,7 +315,7 @@ class CommentCreateHandler(EntryHandler):
 class CommentUpdateHandler(EntryHandler):
     def get(self, url_string):
 
-        user = self.getUser()
+        user = self.getUserFromCookie()
         if not user:
             # self.error(401)
             self.redirect('/login')
@@ -336,7 +336,7 @@ class CommentUpdateHandler(EntryHandler):
 
     def post(self, url_string):
 
-        user = self.getUser()
+        user = self.getUserFromCookie()
         if not user:
             # self.error(401)
             self.redirect('/login')
@@ -371,7 +371,7 @@ class CommentUpdateHandler(EntryHandler):
 class CommentDeleteHandler(EntryHandler):
     def post(self, url_string):
 
-        user = self.getUser()
+        user = self.getUserFromCookie()
         if not user:
             # self.error(401)
             self.redirect('/login')

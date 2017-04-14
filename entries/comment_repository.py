@@ -18,6 +18,7 @@ class CommentDbRepository:
     @staticmethod
     def get_by_url(url_string):
         """
+        :type url_string: String
         :rtype: CommentDb
         """
         return CommentDbRepository.key_from(url_string).get()
@@ -33,6 +34,9 @@ class CommentDbRepository:
 
     @staticmethod
     def delete_by_url(url_string):
+        """
+        :type url_string: String
+        """
         res = CommentDbRepository.key_from(url_string).delete()
         time.sleep(0.5)
         return res
