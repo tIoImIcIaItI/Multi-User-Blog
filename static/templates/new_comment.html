@@ -4,16 +4,13 @@
           action="/posts/{{entry.key.urlsafe()}}/comment"
           method="POST">
 
-        <input type="hidden" name="id"
-               value="{{entry.key.urlsafe()}}"/>
-
         <!-- USERNAME -->
         <fieldset class="uk-form-row">
 
             <label class="uk-form-label sr-only" for="content">Comment</label>
 
-            <textarea class=""
-                      required aria-required="true"
+            <textarea class="{{ 'uk-form-danger' if content_error else '' }}"
+                      required aria-required="true" minlength="2" maxlength="1024"
                       rows="4"
                       id="content" name="content"
                       placeholder="enter your comment here">{{content|safe() or ''}}</textarea>
