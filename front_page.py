@@ -1,8 +1,8 @@
 from entries.entry_repository import EntryDbRepository
-from entry_page import \
-    EntryViewModel
+
 from handler import Handler
 from permissions import AppPermissions
+from view_models import EntryViewModel
 
 entries = EntryDbRepository()
 

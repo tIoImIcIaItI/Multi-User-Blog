@@ -10,61 +10,6 @@ users = UserDbRepository()
 votes = VoteRepository()
 
 
-class EntryViewModel:
-    def __init__(
-            self, key,
-            subject, content, date, modified,
-            upvotes, downvotes,
-            permissions):
-        self.key = key
-        self.subject = subject
-        self.content = content
-        self.date = date
-        self.modified = modified
-        self.upvotes = upvotes
-        self.downvotes = downvotes
-        self.can = permissions
-
-    def content_as_html(self):
-        return self.content.replace('\n', '<br>')
-
-
-class CommentViewModel:
-    def __init__(
-            self, key,
-            creator_id, username,
-            content, date, modified, permissions):
-        self.key = key
-        self.creator_id = creator_id
-        self.username = username
-        self.content = content
-        self.date = date
-        self.modified = modified
-        self.can = permissions
-
-    def content_as_html(self):
-        return self.content.replace('\n', '<br>')
-
-
-def validateForm(handler):
-    subject = handler.request.get('subject', '')
-    content = handler.request.get('content', '')
-
-    subject_error = None
-    if not subject or len(subject) < 2 or len(subject) > 128:
-        subject_error = \
-            'A subject between 2 and 128 characters is required'
-
-    content_error = None
-    if not content or len(content) < 2 or len(content) > 4096:
-        content_error = \
-            'Content between 2 and 4096 characters is required'
-
-    return \
-        subject, subject_error, \
-        content, content_error
-
-
 class EntryCreateHandler(EntryHandler):
     def get(self):
 
@@ -85,7 +30,7 @@ class EntryCreateHandler(EntryHandler):
             return
 
         (subject, subject_error, content, content_error) = \
-            validateForm(self)
+            self.validateForm()
 
         if subject_error is None and content_error is None:
             new_entry = entries.new_for(
@@ -112,32 +57,12 @@ class EntryReadHandler(EntryHandler):
             self.error(404)
             return
 
-        def fromEntryDb(model):
-            """
-            :type: model: EntryDb
-            :rtype: EntryViewModel
-            """
-            return EntryViewModel(
-                model.key,
-                model.subject, model.content,
-                model.date, model.modified,
-                model.upvotes, model.downvotes,
-                self.getUserPermissionsOnEntry(user, model))
-
-        def fromCommentDb(comment):
-            """
-            :type: comment: CommentDb
-            :rtype: CommentViewModel
-            """
-            return CommentViewModel(
-                comment.key,
-                comment.creator_id, comment.creator_username,
-                comment.content, comment.date, comment.modified,
-                self.getUserPermissionsOnComment(user, comment))
+        def fromCommentDb(arg):
+            return self.fromCommentDb(user, arg)
 
         self.render(
             "permalink.html",
-            entry=fromEntryDb(entry),
+            entry=self.fromEntryDb(user, entry),
             can=self.getUserPermissionsOnEntry(user, entry),
             comments=map(fromCommentDb, comments.get_all_for(entry)))
 
@@ -182,7 +107,7 @@ class EntryUpdateHandler(EntryHandler):
             return
 
         (subject, subject_error, content, content_error) = \
-            validateForm(self)
+            self.validateForm()
 
         if subject_error is None and content_error is None:
             entry.subject = subject
@@ -296,12 +221,13 @@ class CommentCreateHandler(EntryHandler):
             self.error(403)
             return
 
-        content = self.request.get('content', '')
-        content_valid = content and 2 < len(content) < 1024 * 1
-        content_error = '' if content_valid else 'Valid content is required'
+        (content, content_error) = \
+            self.validateCommentForm()
 
-        if content_valid:
+        def fromCommentDb(arg):
+            return self.fromCommentDb(user, arg)
 
+        if content_error is None:
             comment = comments.new_for(
                 user, entry, content=content)
 
@@ -311,9 +237,9 @@ class CommentCreateHandler(EntryHandler):
         else:
             self.render(
                 "permalink.html",
-                entry=entry,
+                entry=self.fromEntryDb(user, entry),
                 can=self.getUserPermissionsOnEntry(user, entry),
-                comments=comments.get_all_for(entry),
+                comments=map(fromCommentDb, comments.get_all_for(entry)),
                 content=content,
                 content_error=content_error)
 
