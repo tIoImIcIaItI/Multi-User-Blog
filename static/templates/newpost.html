@@ -15,7 +15,8 @@
             <label class="uk-form-label" for="subject">Subject</label>
 
             <input class="{{ 'uk-form-danger' if subject_error else '' }}"
-                   data-autofocus required aria-required="true"
+                   data-autofocus
+                   required aria-required="true" minlength="2" maxlength="128"
                    id="subject" name="subject" value="{{subject}}"/>
 
             <div id="subject-error" data-error-for="subject"
@@ -34,9 +35,10 @@
 
             <label class="uk-form-label" for="content">Content</label>
 
-            <textarea class="{{ 'uk-form-danger' if subject_error else '' }}"
+            <textarea class="{{ 'uk-form-danger' if content_error else '' }}"
                       id="content" name="content"
-                      required aria-required="true">{{content}}</textarea>
+                      required aria-required="true" minlength="2"
+                      maxlength="4096">{{content}}</textarea>
 
             <div id="content-error" data-error-for="content"
                  class="validation-error uk-text-danger invisible"></div>

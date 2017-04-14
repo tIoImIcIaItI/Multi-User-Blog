@@ -16,6 +16,7 @@
 
             <input class="{{ 'uk-form-danger' if subject_error else '' }}"
                    data-autofocus required aria-required="true"
+                   minlength="2" maxlength="128"
                    id="subject" name="subject"
                    value="{{entry.subject}}"/>
 
@@ -35,12 +36,11 @@
 
             <label class="uk-form-label" for="content">Content</label>
 
-            <textarea class="{{ 'uk-form-danger' if content_error else '' }}"
-                      required aria-required="true"
-                      rows="10"
-                      id="content" class="" name="content">
-                {{entry.content}}
-            </textarea>
+            <textarea
+                class="{{ 'uk-form-danger' if content_error else '' }}"
+                required aria-required="true" minlength="2" maxlength="4096"
+                rows="10" id="content" name="content"
+                >{{entry.content}}</textarea>
 
             <div id="content-error" data-error-for="content"
                  class="validation-error uk-text-danger invisible"></div>

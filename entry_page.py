@@ -4,7 +4,6 @@ from entries.entry_repository import EntryDbRepository
 from entries.vote_repository import VoteRepository
 from users.user_repository import UserDbRepository
 
-
 comments = CommentDbRepository()
 entries = EntryDbRepository()
 users = UserDbRepository()
@@ -47,6 +46,25 @@ class CommentViewModel:
         return self.content.replace('\n', '<br>')
 
 
+def validateForm(handler):
+    subject = handler.request.get('subject', '')
+    content = handler.request.get('content', '')
+
+    subject_error = None
+    if not subject or len(subject) < 2 or len(subject) > 128:
+        subject_error = \
+            'A subject between 2 and 128 characters is required'
+
+    content_error = None
+    if not content or len(content) < 2 or len(content) > 4096:
+        content_error = \
+            'Content between 2 and 4096 characters is required'
+
+    return \
+        subject, subject_error, \
+        content, content_error
+
+
 class EntryCreateHandler(EntryHandler):
     def get(self):
 
@@ -66,22 +84,16 @@ class EntryCreateHandler(EntryHandler):
             self.redirect('/login')
             return
 
-        subject = self.request.get('subject', '')
-        content = self.request.get('content', '')
+        (subject, subject_error, content, content_error) = \
+            validateForm(self)
 
-        subject_valid = subject and 2 < len(subject) < 128
-        content_valid = content and 2 < len(content) < 1024 * 4
-
-        subject_error = '' if subject_valid else 'A valid subject is required'
-        content_error = '' if content_valid else 'Valid content is required'
-
-        if subject_valid and content_valid:
+        if subject_error is None and content_error is None:
             new_entry = entries.new_for(
                 user, subject=subject, content=content)
 
-            new_entry_key = entries.create(new_entry)
+            key = entries.create(new_entry)
 
-            self.redirect(self.urlKeyForKey(new_entry_key))
+            self.redirect(self.urlKeyForKey(key))
         else:
             self.render(
                 "newpost.html",
@@ -169,16 +181,10 @@ class EntryUpdateHandler(EntryHandler):
             self.error(403)
             return
 
-        subject = self.request.get('subject', '')
-        content = self.request.get('content', '')
+        (subject, subject_error, content, content_error) = \
+            validateForm(self)
 
-        subject_valid = subject and 2 < len(subject) < 128
-        content_valid = content and 2 < len(content) < 1024 * 4
-
-        subject_error = '' if subject_valid else 'A valid subject is required'
-        content_error = '' if content_valid else 'Valid content is required'
-
-        if subject_valid and content_valid:
+        if subject_error is None and content_error is None:
             entry.subject = subject
             entry.content = content
 
