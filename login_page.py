@@ -6,6 +6,8 @@ from users.user_repository import UserDbRepository
 
 users = UserDbRepository()
 
+# TODO: validate usernames: minlength="2" maxlength="48"
+# TODO: validate passwords: minlength="6" maxlength="32"
 
 class LoginPage(Handler):
     def get(self):

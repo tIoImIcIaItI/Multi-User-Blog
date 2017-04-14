@@ -17,6 +17,7 @@
 
             <input class="{{ 'uk-form-danger' if username_error else '' }}"
                    data-autofocus required aria-required="true"
+                   minlength="2" maxlength="48"
                    type="text" id="username" name="username"
                    value="{{username or ''}}" placeholder="username"/>
 
@@ -38,6 +39,7 @@
 
             <input class="uk-form-password {{ 'uk-form-danger' if password_error else '' }}"
                    required aria-required="true"
+                   minlength="6" maxlength="32"
                    type="password" id="password" name="password"
                    value="{{password or ''}}" placeholder="password"/>
 
@@ -74,4 +76,8 @@
     </form>
 
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script src="/js/app/signinformviewmodel.js"></script>
 {% endblock %}

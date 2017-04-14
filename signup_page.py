@@ -9,6 +9,10 @@ from users.user_repository import UserDbRepository
 
 users = UserDbRepository()
 
+# TODO: validate usernames: minlength="2" maxlength="48" unique
+# TODO: validate passwords: minlength="6" maxlength="32" complexity matches
+# TODO: validate emails: standard regex
+# TODO: JSON endpoint to check for username availability in real-time
 
 class SignupPage(Handler):
     def get(self):

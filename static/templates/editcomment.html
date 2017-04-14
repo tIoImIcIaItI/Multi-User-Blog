@@ -5,7 +5,7 @@
 
     <h1>Edit Comment</h1>
 
-    <form id="edit-comment-form"
+    <form id="comment-form"
           class="uk-form uk-form-stacked" data-uk-margin
           method="POST">
 
@@ -46,4 +46,8 @@
     </form>
 
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script src="/js/app/commentformviewmodel.js"></script>
 {% endblock %}

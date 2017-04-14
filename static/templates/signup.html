@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- TODO: provide live feedback on email validity -->
+<!-- TODO: provide live feedback on password validity -->
+<!-- TODO: provide live feedback on password matches -->
+<!-- TODO: enable showing password? -->
+
 <main id="main">
 
     <h1>Sign Up</h1>
@@ -15,8 +20,9 @@
 
             <label class="uk-form-label" for="username">Username</label>
 
-            <input class=""
+            <input class="{{ 'uk-form-danger' if username_error else '' }}"
                    data-autofocus required aria-required="true"
+                   minlength="2" maxlength="48"
                    type="text" id="username" name="username"
                    value="{{username or ''}}" placeholder="username"/>
 
@@ -38,6 +44,7 @@
 
             <input class="uk-form-password {{ 'uk-form-danger' if password_error else '' }}"
                    required aria-required="true"
+                   minlength="6" maxlength="32"
                    type="password" id="password" name="password"
                    value="" placeholder="password"/>
 
@@ -59,6 +66,7 @@
 
             <input class="uk-form-password {{ 'uk-form-danger' if verify_error else '' }}"
                    required aria-required="true"
+                   minlength="6" maxlength="32"
                    type="password" id="verify" name="verify"
                    value="" placeholder="enter your password again"/>
 
@@ -78,7 +86,7 @@
 
             <label class="uk-form-label" for="email">Email</label>
 
-            <input class=""
+            <input class="uk-form-password {{ 'uk-form-danger' if email_error else '' }}"
                    required aria-required="true"
                    type="text" id="email" name="email" value="{{email or ''}}"
                    placeholder="email"/>
@@ -116,4 +124,8 @@
     </form>
 
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script src="/js/app/signupformviewmodel.js"></script>
 {% endblock %}
