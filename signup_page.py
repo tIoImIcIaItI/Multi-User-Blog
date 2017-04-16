@@ -1,62 +1,108 @@
-import hashlib
-import random
-import string
+import re
 
 from handler import Handler
-from users.user import UserDb
-from users.user_cookie import UserCookie
 from users.user_repository import UserDbRepository
 
 users = UserDbRepository()
 
-# TODO: validate usernames: minlength="2" maxlength="48" unique
-# TODO: validate passwords: minlength="6" maxlength="32" complexity matches
-# TODO: validate emails: standard regex
+
 # TODO: JSON endpoint to check for username availability in real-time
 
 class SignupPage(Handler):
-    def get(self):
-        # Log out the user
-        self.response.delete_cookie(
-            UserCookie.cookie_name())
+    def validateForm(self):
 
-        self.render(
-            "signup.html",
-            suppressSignup=True)
-
-    def post(self):
-        username = self.request.get('username', '')
+        username = self.request.get('username_input', '')
         password = self.request.get('password', '')
         verify = self.request.get('verify', '')
         email = self.request.get('email', '')
 
+        username_error = None
+        password_error = None
+        verify_error = None
+        email_error = None
+
+        # Validate username availability and length
         user = users.get_by_username(username)
         if user:
+            username_error = '%s is not available' % username
+        else:
+            if not username or len(username) < 2 or len(username) > 48:
+                username_error = \
+                    'A username between 2 and 48 characters is required'
+
+        # Validate email format
+        # SOURCE: https://www.scottbrady91.com/Email-Verification/Python
+        # -Email-Verification-Script
+        match = re.match(
+            '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{'
+            '2,4})$', email)
+        if match is None:
+            email_error = \
+                'A valid email address is required'
+
+        # Validate password requirements
+        if not password or len(password) < 6 or len(password) > 32:
+            password_error = \
+                'A password between 6 and 32 characters is required'
+
+        # Validate passwords match
+        if password != verify:
+            verify_error = \
+                'Passwords do not match'
+
+        is_valid = \
+            username_error is None and \
+            password_error is None and \
+            verify_error is None and \
+            email_error is None
+
+        return is_valid, \
+               username, username_error, \
+               password, password_error, \
+               verify, verify_error, \
+               email, email_error
+
+    def get(self):
+        self.sign_out()
+
+        self.render(
+            'signup.html',
+            suppressSignup=True)
+
+    def post(self):
+
+        # Validate the form
+
+        (is_valid,
+         username, username_error,
+         password, password_error,
+         verify, verify_error,
+         email, email_error) = \
+            self.validateForm()
+
+        if not is_valid:
             self.render(
                 "signup.html",
-                username_error='USERNAME {0} IS ALREADY TAKEN'.format(user))
+                suppressSignup=True,
+                username_input=username,
+                email=email,
+                username_error=username_error,
+                password_error=password_error,
+                verify_error=verify_error,
+                email_error=email_error)
             return
 
-        # Create a salted, hashed password
-        salt = \
-            ''.join([random.choice(list(string.ascii_lowercase))
-                     for x in range(10)])
+        # Create the new account
 
-        pwd_hash = \
-            hashlib.sha256(password + salt).hexdigest()
+        (created_account, username, pwd_hash, salt) = \
+            self.create_account(username, password, email)
 
-        # Create a new user in the data store
-        key = users.add(UserDb(
-            username=username, password=pwd_hash,
-            salt=salt, email=email))
-
-        if not key:
+        if not created_account:
             self.error(500)
             return
 
-        # Create a login cookie
-        self.response.headers.add_header(
-            'Set-Cookie', UserCookie.create_cookie(username, pwd_hash, salt))
+        # Sign in the new user
 
-        # Send the new user to the welcome page
+        self.sign_in(username, pwd_hash, salt)
+
         self.redirect('/welcome')
