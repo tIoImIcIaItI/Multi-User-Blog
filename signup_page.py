@@ -1,16 +1,15 @@
 import re
 
 from handler import Handler
-from users.user_repository import UserDbRepository
-
-users = UserDbRepository()
 
 
 # TODO: JSON endpoint to check for username availability in real-time
 
 class SignupPage(Handler):
+
     def validate_form(self):
 
+        # Extract the form input values
         username = self.request.get('username_input', '')
         password = self.request.get('password', '')
         verify = self.request.get('verify', '')
@@ -22,7 +21,7 @@ class SignupPage(Handler):
         email_error = None
 
         # Validate username availability and length
-        user = users.get_by_username(username)
+        user = self.users.get_by_username(username)
         if user:
             username_error = '%s is not available' % username
         else:

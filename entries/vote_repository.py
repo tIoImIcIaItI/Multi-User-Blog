@@ -1,5 +1,4 @@
 import time
-import logging
 
 from entries.entry import UserEntryVoteRecordDb
 
@@ -17,13 +16,6 @@ class VoteRepository:
         """
         :rtype: UserEntryVoteRecordDb
         """
-
-        logging.info(entry.key.id())
-        logging.info(
-            UserEntryVoteRecordDb.
-            query(ancestor=user.key).
-            fetch())
-
         return UserEntryVoteRecordDb. \
             query(ancestor=user.key). \
             filter(UserEntryVoteRecordDb.entry_id == entry.key.id()). \

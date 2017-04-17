@@ -4,19 +4,20 @@ from entries.entry_repository import EntryDbRepository
 from entries.vote_repository import VoteRepository
 from handler import Handler
 from permissions import CommentPermissions, EntryPermissions
-from users.user_repository import UserDbRepository
 from view_models import EntryViewModel, CommentViewModel
-
-entries = EntryDbRepository()
-users = UserDbRepository()
-comments = CommentDbRepository()
-votes = VoteRepository()
 
 
 class EntryHandler(Handler):
     """
     Adds utility methods for endpoints dealing with entries and their authors
     """
+
+    def __init__(self, request=None, response=None):
+        super(EntryHandler, self).__init__(request, response)
+
+        self.comments = CommentDbRepository()
+        self.entries = EntryDbRepository()
+        self.votes = VoteRepository()
 
     @staticmethod
     def url_key_for(entry):
@@ -50,24 +51,21 @@ class EntryHandler(Handler):
         """
         return '/posts/%s' % comment.key.parent().urlsafe()
 
-    @staticmethod
-    def get_entry_from(url):
+    def get_entry_from(self, url):
         """
         :type: url: String
         :rtype: EntryDb
         """
-        return entries.get_by_url(url)
+        return self.entries.get_by_url(url)
 
-    @staticmethod
-    def get_comment_from(url):
+    def get_comment_from(self, url):
         """
         :type: url: String
         :rtype: EntryDb
         """
-        return comments.get_by_url(url)
+        return self.comments.get_by_url(url)
 
-    @staticmethod
-    def get_user_permissions_on_entry(user, entry):
+    def get_user_permissions_on_entry(self, user, entry):
         """
         :type user: UserDb
         :type entry: EntryDb
@@ -82,7 +80,7 @@ class EntryHandler(Handler):
             entry.key.parent() == user.key
 
         already_voted = \
-            votes.get_by_entry_for_user(user, entry) is not None \
+            self.votes.get_by_entry_for_user(user, entry) is not None \
             if is_authenticated else False
 
         return EntryPermissions(

@@ -1,13 +1,4 @@
-from entries.comment_repository import CommentDbRepository
 from entries.entry_handler import EntryHandler
-from entries.entry_repository import EntryDbRepository
-from entries.vote_repository import VoteRepository
-from users.user_repository import UserDbRepository
-
-comments = CommentDbRepository()
-entries = EntryDbRepository()
-users = UserDbRepository()
-votes = VoteRepository()
 
 
 class EntryCreateHandler(EntryHandler):
@@ -37,10 +28,10 @@ class EntryCreateHandler(EntryHandler):
             self.validate_form()
 
         if subject_error is None and content_error is None:
-            new_entry = entries.new_for(
+            new_entry = self.entries.new_for(
                 user, subject=subject, content=content)
 
-            key = entries.create(new_entry)
+            key = self.entries.create(new_entry)
 
             self.redirect(self.url_key_for_key(key))
         else:
@@ -71,7 +62,7 @@ class EntryReadHandler(EntryHandler):
             "permalink.html",
             entry=self.from_entry_db(user, entry),
             can=self.get_user_permissions_on_entry(user, entry),
-            comments=map(from_comment, comments.get_all_for(entry)))
+            comments=map(from_comment, self.comments.get_all_for(entry)))
 
 
 class EntryUpdateHandler(EntryHandler):
@@ -136,7 +127,7 @@ class EntryUpdateHandler(EntryHandler):
             entry.subject = subject
             entry.content = content
 
-            entries.update(entry)
+            self.entries.update(entry)
 
             self.redirect(self.url_for_entry(entry))
         else:
@@ -173,7 +164,7 @@ class EntryDeleteHandler(EntryHandler):
             self.redirect(self.url_for_entry(entry))
             return
 
-        entries.delete(entry)
+        self.entries.delete(entry)
 
         self.redirect('/')
 
@@ -206,10 +197,10 @@ class EntryUpvoteHandler(EntryHandler):
 
         # increment the upvote count
         entry.upvotes = entry.upvotes + 1 if entry.upvotes else 1
-        entries.update(entry)
+        self.entries.update(entry)
 
         # record the user's vote for this entry
-        votes.create(votes.new_for(user, entry))
+        self.votes.create(self.votes.new_for(user, entry))
 
         self.redirect(self.url_for_entry(entry))
 
@@ -242,10 +233,10 @@ class EntryDownvoteHandler(EntryHandler):
 
         # increment the downvote count
         entry.downvotes = entry.downvotes + 1 if entry.downvotes else 1
-        entries.update(entry)
+        self.entries.update(entry)
 
         # record the user's vote for this entry
-        votes.create(votes.new_for(user, entry))
+        self.votes.create(self.votes.new_for(user, entry))
 
         self.redirect(self.url_for_entry(entry))
 
@@ -283,10 +274,10 @@ class CommentCreateHandler(EntryHandler):
             return self.from_comment_db(user, arg)
 
         if content_error is None:
-            comment = comments.new_for(
+            comment = self.comments.new_for(
                 user, entry, content=content)
 
-            comments.create(comment)
+            self.comments.create(comment)
 
             self.redirect(self.url_for_entry(entry))
         else:
@@ -294,7 +285,7 @@ class CommentCreateHandler(EntryHandler):
                 "permalink.html",
                 entry=self.from_entry_db(user, entry),
                 can=self.get_user_permissions_on_entry(user, entry),
-                comments=map(from_comment, comments.get_all_for(entry)),
+                comments=map(from_comment, self.comments.get_all_for(entry)),
                 content=content,
                 content_error=content_error)
 
@@ -360,7 +351,7 @@ class CommentUpdateHandler(EntryHandler):
         if content_error is None:
             comment.content = content
 
-            comments.update(comment)
+            self.comments.update(comment)
 
             self.redirect(self.url_for_comments_entry(comment))
         else:
@@ -396,6 +387,6 @@ class CommentDeleteHandler(EntryHandler):
             self.redirect(self.url_for_entry(comment))
             return
 
-        comments.delete(comment)
+        self.comments.delete(comment)
 
         self.redirect(self.url_for_comments_entry(comment))

@@ -10,8 +10,6 @@ from webapp2_extras import sessions
 from users.user import UserDb
 from users.user_repository import UserDbRepository
 
-users = UserDbRepository()
-
 
 class Handler(webapp2.RequestHandler):
     """
@@ -21,6 +19,8 @@ class Handler(webapp2.RequestHandler):
 
     def __init__(self, request=None, response=None):
         super(Handler, self).__init__(request, response)
+
+        self.users = UserDbRepository()
 
         # Initialize the template engine
 
@@ -53,13 +53,25 @@ class Handler(webapp2.RequestHandler):
     # -google-app-engine/
     @webapp2.cached_property
     def session(self):
-        # Returns a session using the default cookie key.
+        """
+        Returns a session using the default cookie key.
+        """
         sess = self.session_store.get_session()
         return sess
 
-    def add_flash(self, message, level=None):
+    def add_flash(self, message, level=None, key='_flash'):
+        """
+        Adds a message to be displayed on the next page render.
+        
+        :param message:
+            Value to be saved in the flash message.
+        :param level:
+            An optional level to set with the message. Default is `None`.
+        :param key:
+            Name of the flash key stored in the session. Default is '_flash'.
+        """
         self.session_store.get_session(). \
-            add_flash(message, level)
+            add_flash(message, level, key)
 
     def write(self, *a, **kw):
         """
@@ -113,7 +125,7 @@ class Handler(webapp2.RequestHandler):
         :rtype: UserDb
         """
         username = self.get_username_from_cookie()
-        return users.get_by_username(username) if username else None
+        return self.users.get_by_username(username) if username else None
 
     @staticmethod
     def cookie_name():
@@ -129,8 +141,7 @@ class Handler(webapp2.RequestHandler):
     def user_name_from(cookie):
         return cookie.split('|')[0]
 
-    @staticmethod
-    def create_account(username, password, email):
+    def create_account(self, username, password, email):
         # Create a salted, hashed password
         salt = \
             ''.join([random.choice(list(string.ascii_lowercase))
@@ -140,7 +151,7 @@ class Handler(webapp2.RequestHandler):
             hashlib.sha256(password + salt).hexdigest()
 
         # Create a new user in the data store
-        key = users.add(UserDb(
+        key = self.users.add(UserDb(
             username=username, password=pwd_hash,
             salt=salt, email=email))
 
@@ -157,8 +168,7 @@ class Handler(webapp2.RequestHandler):
         self.response.delete_cookie(
             Handler.cookie_name())
 
-    @staticmethod
-    def authenticate(username, password):
+    def authenticate(self, username, password):
         """
         Attempts to authenticate the given username and password combination.
         If successful, the user is logged in.
@@ -167,7 +177,7 @@ class Handler(webapp2.RequestHandler):
         :type password: String 
         :rtype: Boolean 
         """
-        user = users.get_by_username(username)
+        user = self.users.get_by_username(username)
         if not user:
             logging.error('no user')
             return False, None, None, None

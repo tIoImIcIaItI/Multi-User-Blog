@@ -1,9 +1,4 @@
-import logging
-
 from handler import Handler
-from users.user_repository import UserDbRepository
-
-users = UserDbRepository()
 
 
 class LoginPage(Handler):
@@ -15,8 +10,6 @@ class LoginPage(Handler):
             suppressLogin=True)
 
     def post(self):
-        logging.info(self.request.get('password', ''))
-
         (authenticated, username, pwd_hash, salt) = \
             self.authenticate(
                 self.request.get('username_input', ''),

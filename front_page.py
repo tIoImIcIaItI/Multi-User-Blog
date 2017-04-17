@@ -1,16 +1,11 @@
-from entries.entry_repository import EntryDbRepository
+from entries.entry_handler import EntryHandler
 
-from handler import Handler
 from permissions import AppPermissions
 from view_models import EntryViewModel
 
-entries = EntryDbRepository()
 
-
-class FrontPage(Handler):
-
+class FrontPage(EntryHandler):
     def get(self):
-
         def from_entry_db(model):
             """
             :type: model: EntryDb
@@ -30,5 +25,5 @@ class FrontPage(Handler):
 
         self.render(
             "index.html",
-            entries=map(from_entry_db, entries.get_all()),
+            entries=map(from_entry_db, self.entries.get_all()),
             can=can)
