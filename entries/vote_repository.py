@@ -3,7 +3,7 @@ import time
 from entries.entry import UserEntryVoteRecordDb
 
 
-class VoteRepository:
+class VoteRepository(object):
     """
     Implements a simple repository pattern over UserEntryVoteRecordDb entities 
     """

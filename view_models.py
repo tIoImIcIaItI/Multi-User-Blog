@@ -1,4 +1,4 @@
-class EntryViewModel:
+class EntryViewModel(object):
     def __init__(
             self, key,
             subject, content, date, modified,
@@ -17,7 +17,7 @@ class EntryViewModel:
         return self.content.replace('\n', '<br>')
 
 
-class CommentViewModel:
+class CommentViewModel(object):
     def __init__(
             self, key,
             creator_id, username,

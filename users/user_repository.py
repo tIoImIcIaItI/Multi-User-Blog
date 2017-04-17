@@ -3,7 +3,7 @@ from google.appengine.ext import ndb
 from users.user import UserDb
 
 
-class UserDbRepository:
+class UserDbRepository(object):
 
     @staticmethod
     def get_by_username(username):

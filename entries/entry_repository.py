@@ -5,7 +5,7 @@ from google.appengine.ext import ndb
 from entries.entry import EntryDb
 
 
-class EntryDbRepository:
+class EntryDbRepository(object):
     """
     Implements a simple repository pattern over EntryDb entities 
     """

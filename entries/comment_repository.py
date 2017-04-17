@@ -5,7 +5,7 @@ from google.appengine.ext import ndb
 from entries.entry import CommentDb
 
 
-class CommentDbRepository:
+class CommentDbRepository(object):
     @staticmethod
     def get_all_for(entry):
         """
