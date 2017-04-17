@@ -1,7 +1,8 @@
 import time
 
-from entry import EntryDb, CommentDb
 from google.appengine.ext import ndb
+
+from entries.entry import CommentDb
 
 
 class CommentDbRepository:

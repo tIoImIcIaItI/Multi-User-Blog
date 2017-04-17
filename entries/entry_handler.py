@@ -19,7 +19,7 @@ class EntryHandler(Handler):
     """
 
     @staticmethod
-    def urlKeyFor(entry):
+    def url_key_for(entry):
         """
         :type: entry: EntryDb
         :rtype: String
@@ -27,7 +27,7 @@ class EntryHandler(Handler):
         return entry.key.urlsafe()
 
     @staticmethod
-    def urlKeyForKey(key):
+    def url_key_for_key(key):
         """
         :type: key: Key
         :rtype: String
@@ -35,15 +35,15 @@ class EntryHandler(Handler):
         return '/posts/%s' % key.urlsafe()
 
     @staticmethod
-    def urlFor(entry):
+    def url_for_entry(entry):
         """
         :type: entry: EntryDb
         :rtype: String
         """
-        return '/posts/%s' % EntryHandler.urlKeyFor(entry)
+        return '/posts/%s' % EntryHandler.url_key_for(entry)
 
     @staticmethod
-    def urlForCommentsEntry(comment):
+    def url_for_comments_entry(comment):
         """
         :type: entry: CommentDb
         :rtype: String
@@ -51,7 +51,7 @@ class EntryHandler(Handler):
         return '/posts/%s' % comment.key.parent().urlsafe()
 
     @staticmethod
-    def getEntryFrom(url):
+    def get_entry_from(url):
         """
         :type: url: String
         :rtype: EntryDb
@@ -59,7 +59,7 @@ class EntryHandler(Handler):
         return entries.get_by_url(url)
 
     @staticmethod
-    def getCommentFrom(url):
+    def get_comment_from(url):
         """
         :type: url: String
         :rtype: EntryDb
@@ -67,7 +67,7 @@ class EntryHandler(Handler):
         return comments.get_by_url(url)
 
     @staticmethod
-    def getUserPermissionsOnEntry(user, entry):
+    def get_user_permissions_on_entry(user, entry):
         """
         :type user: UserDb
         :type entry: EntryDb
@@ -83,7 +83,7 @@ class EntryHandler(Handler):
 
         already_voted = \
             votes.get_by_entry_for_user(user, entry) is not None \
-                if is_authenticated else False
+            if is_authenticated else False
 
         return EntryPermissions(
 
@@ -101,7 +101,7 @@ class EntryHandler(Handler):
         )
 
     @staticmethod
-    def getUserPermissionsOnComment(user, comment):
+    def get_user_permissions_on_comment(user, comment):
         """
         :type user: UserDb
         :type comment: CommentDb
@@ -122,7 +122,7 @@ class EntryHandler(Handler):
             delete=is_authenticated and is_creator,
         )
 
-    def validateForm(self):
+    def validate_form(self):
         """
         Extracts and validates the entry form inputs
         """
@@ -143,7 +143,7 @@ class EntryHandler(Handler):
             subject, subject_error, \
             content, content_error
 
-    def fromEntryDb(self, user, model):
+    def from_entry_db(self, user, model):
         """
         :type: model: EntryDb
         :rtype: EntryViewModel
@@ -153,9 +153,9 @@ class EntryHandler(Handler):
             model.subject, model.content,
             model.date, model.modified,
             model.upvotes, model.downvotes,
-            self.getUserPermissionsOnEntry(user, model))
+            self.get_user_permissions_on_entry(user, model))
 
-    def fromCommentDb(self, user, comment):
+    def from_comment_db(self, user, comment):
         """
         :type: comment: CommentDb
         :rtype: CommentViewModel
@@ -164,9 +164,9 @@ class EntryHandler(Handler):
             comment.key,
             comment.creator_id, comment.creator_username,
             comment.content, comment.date, comment.modified,
-            self.getUserPermissionsOnComment(user, comment))
+            self.get_user_permissions_on_comment(user, comment))
 
-    def validateCommentForm(self):
+    def validate_comment_form(self):
         """
         Extracts and validates the comment form inputs
         """

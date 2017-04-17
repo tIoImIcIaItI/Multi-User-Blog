@@ -1,5 +1,6 @@
-from user import UserDb
 from google.appengine.ext import ndb
+
+from users.user import UserDb
 
 
 class UserDbRepository:

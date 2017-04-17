@@ -13,7 +13,7 @@ votes = VoteRepository()
 class EntryCreateHandler(EntryHandler):
     def get(self):
 
-        user = self.getUserFromCookie()
+        user = self.get_user_from_cookie()
         if not user:
             # self.error(401)
             self.add_flash(
@@ -25,7 +25,7 @@ class EntryCreateHandler(EntryHandler):
 
     def post(self):
 
-        user = self.getUserFromCookie()
+        user = self.get_user_from_cookie()
         if not user:
             # self.error(401)
             self.add_flash(
@@ -34,7 +34,7 @@ class EntryCreateHandler(EntryHandler):
             return
 
         (subject, subject_error, content, content_error) = \
-            self.validateForm()
+            self.validate_form()
 
         if subject_error is None and content_error is None:
             new_entry = entries.new_for(
@@ -42,7 +42,7 @@ class EntryCreateHandler(EntryHandler):
 
             key = entries.create(new_entry)
 
-            self.redirect(self.urlKeyForKey(key))
+            self.redirect(self.url_key_for_key(key))
         else:
             self.render(
                 "newpost.html",
@@ -54,9 +54,9 @@ class EntryCreateHandler(EntryHandler):
 
 class EntryReadHandler(EntryHandler):
     def get(self, url_string):
-        user = self.getUserFromCookie()
+        user = self.get_user_from_cookie()
 
-        entry = self.getEntryFrom(url_string)
+        entry = self.get_entry_from(url_string)
         if not entry:
             # self.error(404)
             self.add_flash(
@@ -65,19 +65,19 @@ class EntryReadHandler(EntryHandler):
             return
 
         def from_comment(arg):
-            return self.fromCommentDb(user, arg)
+            return self.from_comment_db(user, arg)
 
         self.render(
             "permalink.html",
-            entry=self.fromEntryDb(user, entry),
-            can=self.getUserPermissionsOnEntry(user, entry),
+            entry=self.from_entry_db(user, entry),
+            can=self.get_user_permissions_on_entry(user, entry),
             comments=map(from_comment, comments.get_all_for(entry)))
 
 
 class EntryUpdateHandler(EntryHandler):
     def get(self, url_string):
 
-        user = self.getUserFromCookie()
+        user = self.get_user_from_cookie()
         if not user:
             # self.error(401)
             self.add_flash(
@@ -85,7 +85,7 @@ class EntryUpdateHandler(EntryHandler):
             self.redirect('/login')
             return
 
-        entry = self.getEntryFrom(url_string)
+        entry = self.get_entry_from(url_string)
         if not entry:
             # self.error(404)
             self.add_flash(
@@ -93,11 +93,11 @@ class EntryUpdateHandler(EntryHandler):
             self.redirect("/")
             return
 
-        if not self.getUserPermissionsOnEntry(user, entry).edit:
+        if not self.get_user_permissions_on_entry(user, entry).edit:
             # self.error(403)
             self.add_flash(
                 "You may edit only your posts")
-            self.redirect(self.urlFor(entry))
+            self.redirect(self.url_for_entry(entry))
             return
 
         self.render(
@@ -106,7 +106,7 @@ class EntryUpdateHandler(EntryHandler):
 
     def post(self, url_string):
 
-        user = self.getUserFromCookie()
+        user = self.get_user_from_cookie()
         if not user:
             # self.error(401)
             self.add_flash(
@@ -114,7 +114,7 @@ class EntryUpdateHandler(EntryHandler):
             self.redirect('/login')
             return
 
-        entry = self.getEntryFrom(url_string)
+        entry = self.get_entry_from(url_string)
         if not entry:
             # self.error(404)
             self.add_flash(
@@ -122,15 +122,15 @@ class EntryUpdateHandler(EntryHandler):
             self.redirect("/")
             return
 
-        if not self.getUserPermissionsOnEntry(user, entry).edit:
+        if not self.get_user_permissions_on_entry(user, entry).edit:
             # self.error(403)
             self.add_flash(
                 "You may edit only your posts")
-            self.redirect(self.urlFor(entry))
+            self.redirect(self.url_for_entry(entry))
             return
 
         (subject, subject_error, content, content_error) = \
-            self.validateForm()
+            self.validate_form()
 
         if subject_error is None and content_error is None:
             entry.subject = subject
@@ -138,7 +138,7 @@ class EntryUpdateHandler(EntryHandler):
 
             entries.update(entry)
 
-            self.redirect(self.urlFor(entry))
+            self.redirect(self.url_for_entry(entry))
         else:
             self.render(
                 "editpost.html",
@@ -150,7 +150,7 @@ class EntryUpdateHandler(EntryHandler):
 class EntryDeleteHandler(EntryHandler):
     def post(self, url_string):
 
-        user = self.getUserFromCookie()
+        user = self.get_user_from_cookie()
         if not user:
             # self.error(401)
             self.add_flash(
@@ -158,7 +158,7 @@ class EntryDeleteHandler(EntryHandler):
             self.redirect('/login')
             return
 
-        entry = self.getEntryFrom(url_string)
+        entry = self.get_entry_from(url_string)
         if not entry:
             # self.error(404)
             self.add_flash(
@@ -166,11 +166,11 @@ class EntryDeleteHandler(EntryHandler):
             self.redirect("/")
             return
 
-        if not self.getUserPermissionsOnEntry(user, entry).delete:
+        if not self.get_user_permissions_on_entry(user, entry).delete:
             # self.error(403)
             self.add_flash(
                 "You may delete only your posts")
-            self.redirect(self.urlFor(entry))
+            self.redirect(self.url_for_entry(entry))
             return
 
         entries.delete(entry)
@@ -181,7 +181,7 @@ class EntryDeleteHandler(EntryHandler):
 class EntryUpvoteHandler(EntryHandler):
     def post(self, url_string):
 
-        user = self.getUserFromCookie()
+        user = self.get_user_from_cookie()
         if not user:
             # self.error(401)
             self.add_flash(
@@ -189,7 +189,7 @@ class EntryUpvoteHandler(EntryHandler):
             self.redirect('/login')
             return
 
-        entry = self.getEntryFrom(url_string)
+        entry = self.get_entry_from(url_string)
         if not entry:
             # self.error(404)
             self.add_flash(
@@ -197,11 +197,11 @@ class EntryUpvoteHandler(EntryHandler):
             self.redirect("/")
             return
 
-        if not self.getUserPermissionsOnEntry(user, entry).vote:
+        if not self.get_user_permissions_on_entry(user, entry).vote:
             # self.error(403)
             self.add_flash(
                 "You may not vote for your own posts")
-            self.redirect(self.urlFor(entry))
+            self.redirect(self.url_for_entry(entry))
             return
 
         # increment the upvote count
@@ -211,13 +211,13 @@ class EntryUpvoteHandler(EntryHandler):
         # record the user's vote for this entry
         votes.create(votes.new_for(user, entry))
 
-        self.redirect(self.urlFor(entry))
+        self.redirect(self.url_for_entry(entry))
 
 
 class EntryDownvoteHandler(EntryHandler):
     def post(self, url_string):
 
-        user = self.getUserFromCookie()
+        user = self.get_user_from_cookie()
         if not user:
             # self.error(401)
             self.add_flash(
@@ -225,7 +225,7 @@ class EntryDownvoteHandler(EntryHandler):
             self.redirect('/login')
             return
 
-        entry = self.getEntryFrom(url_string)
+        entry = self.get_entry_from(url_string)
         if not entry:
             # self.error(404)
             self.add_flash(
@@ -233,11 +233,11 @@ class EntryDownvoteHandler(EntryHandler):
             self.redirect("/")
             return
 
-        if not self.getUserPermissionsOnEntry(user, entry).vote:
+        if not self.get_user_permissions_on_entry(user, entry).vote:
             # self.error(403)
             self.add_flash(
                 "You may not vote for your own posts")
-            self.redirect(self.urlFor(entry))
+            self.redirect(self.url_for_entry(entry))
             return
 
         # increment the downvote count
@@ -247,13 +247,13 @@ class EntryDownvoteHandler(EntryHandler):
         # record the user's vote for this entry
         votes.create(votes.new_for(user, entry))
 
-        self.redirect(self.urlFor(entry))
+        self.redirect(self.url_for_entry(entry))
 
 
 class CommentCreateHandler(EntryHandler):
     def post(self, url_string):
 
-        user = self.getUserFromCookie()
+        user = self.get_user_from_cookie()
         if not user:
             # self.error(401)
             self.add_flash(
@@ -261,7 +261,7 @@ class CommentCreateHandler(EntryHandler):
             self.redirect('/login')
             return
 
-        entry = self.getEntryFrom(url_string)
+        entry = self.get_entry_from(url_string)
         if not entry:
             # self.error(404)
             self.add_flash(
@@ -269,18 +269,18 @@ class CommentCreateHandler(EntryHandler):
             self.redirect("/")
             return
 
-        if not self.getUserPermissionsOnEntry(user, entry).comment:
+        if not self.get_user_permissions_on_entry(user, entry).comment:
             # self.error(403)
             self.add_flash(
                 "You may not comment on this post")
-            self.redirect(self.urlFor(entry))
+            self.redirect(self.url_for_entry(entry))
             return
 
         (content, content_error) = \
-            self.validateCommentForm()
+            self.validate_comment_form()
 
         def from_comment(arg):
-            return self.fromCommentDb(user, arg)
+            return self.from_comment_db(user, arg)
 
         if content_error is None:
             comment = comments.new_for(
@@ -288,12 +288,12 @@ class CommentCreateHandler(EntryHandler):
 
             comments.create(comment)
 
-            self.redirect(self.urlFor(entry))
+            self.redirect(self.url_for_entry(entry))
         else:
             self.render(
                 "permalink.html",
-                entry=self.fromEntryDb(user, entry),
-                can=self.getUserPermissionsOnEntry(user, entry),
+                entry=self.from_entry_db(user, entry),
+                can=self.get_user_permissions_on_entry(user, entry),
                 comments=map(from_comment, comments.get_all_for(entry)),
                 content=content,
                 content_error=content_error)
@@ -302,7 +302,7 @@ class CommentCreateHandler(EntryHandler):
 class CommentUpdateHandler(EntryHandler):
     def get(self, url_string):
 
-        user = self.getUserFromCookie()
+        user = self.get_user_from_cookie()
         if not user:
             # self.error(401)
             self.add_flash(
@@ -310,7 +310,7 @@ class CommentUpdateHandler(EntryHandler):
             self.redirect('/login')
             return
 
-        comment = self.getCommentFrom(url_string)
+        comment = self.get_comment_from(url_string)
         if not comment:
             # self.error(404)
             self.add_flash(
@@ -318,11 +318,11 @@ class CommentUpdateHandler(EntryHandler):
             self.redirect("/")
             return
 
-        if not self.getUserPermissionsOnComment(user, comment).edit:
+        if not self.get_user_permissions_on_comment(user, comment).edit:
             # self.error(403)
             self.add_flash(
                 "You may edit only your own comments")
-            self.redirect(self.urlFor(comment))
+            self.redirect(self.url_for_entry(comment))
             return
 
         self.render(
@@ -331,7 +331,7 @@ class CommentUpdateHandler(EntryHandler):
 
     def post(self, url_string):
 
-        user = self.getUserFromCookie()
+        user = self.get_user_from_cookie()
         if not user:
             # self.error(401)
             self.add_flash(
@@ -339,7 +339,7 @@ class CommentUpdateHandler(EntryHandler):
             self.redirect('/login')
             return
 
-        comment = self.getCommentFrom(url_string)
+        comment = self.get_comment_from(url_string)
         if not comment:
             # self.error(404)
             self.add_flash(
@@ -347,22 +347,22 @@ class CommentUpdateHandler(EntryHandler):
             self.redirect("/")
             return
 
-        if not self.getUserPermissionsOnComment(user, comment).edit:
+        if not self.get_user_permissions_on_comment(user, comment).edit:
             # self.error(403)
             self.add_flash(
                 "You may edit only your own comments")
-            self.redirect(self.urlFor(comment))
+            self.redirect(self.url_for_entry(comment))
             return
 
         (content, content_error) = \
-            self.validateCommentForm()
+            self.validate_comment_form()
 
         if content_error is None:
             comment.content = content
 
             comments.update(comment)
 
-            self.redirect(self.urlForCommentsEntry(comment))
+            self.redirect(self.url_for_comments_entry(comment))
         else:
             self.render(
                 "editcomment.html",
@@ -373,7 +373,7 @@ class CommentUpdateHandler(EntryHandler):
 class CommentDeleteHandler(EntryHandler):
     def post(self, url_string):
 
-        user = self.getUserFromCookie()
+        user = self.get_user_from_cookie()
         if not user:
             # self.error(401)
             self.add_flash(
@@ -381,7 +381,7 @@ class CommentDeleteHandler(EntryHandler):
             self.redirect('/login')
             return
 
-        comment = self.getCommentFrom(url_string)
+        comment = self.get_comment_from(url_string)
         if not comment:
             # self.error(404)
             self.add_flash(
@@ -389,13 +389,13 @@ class CommentDeleteHandler(EntryHandler):
             self.redirect("/")
             return
 
-        if not self.getUserPermissionsOnComment(user, comment).delete:
+        if not self.get_user_permissions_on_comment(user, comment).delete:
             # self.error(403)
             self.add_flash(
                 "You may delete only your own comments")
-            self.redirect(self.urlFor(comment))
+            self.redirect(self.url_for_entry(comment))
             return
 
         comments.delete(comment)
 
-        self.redirect(self.urlForCommentsEntry(comment))
+        self.redirect(self.url_for_comments_entry(comment))

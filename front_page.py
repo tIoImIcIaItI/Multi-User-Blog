@@ -11,7 +11,7 @@ class FrontPage(Handler):
 
     def get(self):
 
-        def fromEntryDb(model):
+        def from_entry_db(model):
             """
             :type: model: EntryDb
             :rtype: EntryViewModel
@@ -23,12 +23,12 @@ class FrontPage(Handler):
                 model.upvotes, model.downvotes,
                 None)
 
-        user = self.getUserFromCookie()
+        user = self.get_user_from_cookie()
 
         can = AppPermissions(
             create_entry=user is not None)
 
         self.render(
             "index.html",
-            entries=map(fromEntryDb, entries.get_all()),
+            entries=map(from_entry_db, entries.get_all()),
             can=can)

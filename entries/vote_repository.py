@@ -1,6 +1,7 @@
 import time
 import logging
-from entry import EntryDb, UserEntryVoteRecordDb
+
+from entries.entry import UserEntryVoteRecordDb
 
 
 class VoteRepository:

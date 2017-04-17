@@ -12,7 +12,7 @@ from signup_page import SignupPage
 from welcome_page import WelcomePage
 
 config = {
-    # webapp2 sesion message flashing requires a value for 'secret_key',
+    # webapp2 session message flashing requires a value for 'secret_key',
     # but there is no security requirement here
     'webapp2_extras.sessions': {'secret_key': 'my-super-secret-key'}
 }

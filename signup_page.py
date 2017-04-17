@@ -9,7 +9,7 @@ users = UserDbRepository()
 # TODO: JSON endpoint to check for username availability in real-time
 
 class SignupPage(Handler):
-    def validateForm(self):
+    def validate_form(self):
 
         username = self.request.get('username_input', '')
         password = self.request.get('password', '')
@@ -56,11 +56,12 @@ class SignupPage(Handler):
             verify_error is None and \
             email_error is None
 
-        return is_valid, \
-               username, username_error, \
-               password, password_error, \
-               verify, verify_error, \
-               email, email_error
+        return \
+            is_valid, \
+            username, username_error, \
+            password, password_error, \
+            verify, verify_error, \
+            email, email_error
 
     def get(self):
         self.sign_out()
@@ -78,7 +79,7 @@ class SignupPage(Handler):
          password, password_error,
          verify, verify_error,
          email, email_error) = \
-            self.validateForm()
+            self.validate_form()
 
         if not is_valid:
             self.render(

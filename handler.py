@@ -84,7 +84,7 @@ class Handler(webapp2.RequestHandler):
         :param params: key-value pairs to be passed to the template
         :return: the text of the rendered template
         """
-        username = self.getUsernameFromCookie()
+        username = self.get_username_from_cookie()
 
         if 'username' not in params:
             params['username'] = username
@@ -98,21 +98,21 @@ class Handler(webapp2.RequestHandler):
 
         self.write(self.render_str(template, **params))
 
-    def getUsernameFromCookie(self):
+    def get_username_from_cookie(self):
         """
         Returns the username contained in the request cookie, or None 
         :rtype: String
         """
         cookie = self.request.cookies.get(Handler.cookie_name())
-        return Handler.userNameFrom(cookie) if cookie else None
+        return Handler.user_name_from(cookie) if cookie else None
 
-    def getUserFromCookie(self):
+    def get_user_from_cookie(self):
         """
         Returns the user object associated with the username 
         contained in the request cookie, or None 
         :rtype: UserDb
         """
-        username = self.getUsernameFromCookie()
+        username = self.get_username_from_cookie()
         return users.get_by_username(username) if username else None
 
     @staticmethod
@@ -126,10 +126,11 @@ class Handler(webapp2.RequestHandler):
             '{0}|{1}|{2}'.format(username, pwd_hash, salt))
 
     @staticmethod
-    def userNameFrom(cookie):
+    def user_name_from(cookie):
         return cookie.split('|')[0]
 
-    def create_account(self, username, password, email):
+    @staticmethod
+    def create_account(username, password, email):
         # Create a salted, hashed password
         salt = \
             ''.join([random.choice(list(string.ascii_lowercase))
@@ -145,7 +146,19 @@ class Handler(webapp2.RequestHandler):
 
         return key is not None, username, pwd_hash, salt
 
-    def authenticate(self, username, password):
+    def sign_in(self, username, pwd_hash, salt):
+        # Create a login cookie
+        self.response.headers.add_header(
+            'Set-Cookie',
+            Handler.create_cookie(username, pwd_hash, salt))
+
+    def sign_out(self):
+        # Remove the login cookie
+        self.response.delete_cookie(
+            Handler.cookie_name())
+
+    @staticmethod
+    def authenticate(username, password):
         """
         Attempts to authenticate the given username and password combination.
         If successful, the user is logged in.
@@ -168,14 +181,3 @@ class Handler(webapp2.RequestHandler):
             return False, None, None, None
 
         return True, username, pwd_hash, salt
-
-    def sign_in(self, username, pwd_hash, salt):
-        # Create a login cookie
-        self.response.headers.add_header(
-            'Set-Cookie',
-            Handler.create_cookie(username, pwd_hash, salt))
-
-    def sign_out(self):
-        # Remove the login cookie
-        self.response.delete_cookie(
-            Handler.cookie_name())

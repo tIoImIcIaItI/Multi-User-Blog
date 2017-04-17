@@ -21,3 +21,4 @@ indexes:
   properties:
   - name: modified
     direction: desc
+

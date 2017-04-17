@@ -2,7 +2,7 @@ import time
 
 from google.appengine.ext import ndb
 
-from entry import EntryDb
+from entries.entry import EntryDb
 
 
 class EntryDbRepository:
